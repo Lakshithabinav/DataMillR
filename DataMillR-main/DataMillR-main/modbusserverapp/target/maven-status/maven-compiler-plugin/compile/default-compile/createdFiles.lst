@@ -1,0 +1,8 @@
+com\example\modbusapplication\Model\TableRequest.class
+com\example\modbusapplication\Model\RawRecordDTO.class
+com\example\modbusapplication\Entity\ModbusRecordEntity.class
+com\example\modbusapplication\Controller\TableController.class
+com\example\modbusapplication\ModbusserverappApplication.class
+com\example\modbusapplication\Model\ModbusRecord.class
+com\example\modbusapplication\Repository\ModbusRecordRepository.class
+com\example\modbusapplication\Service\ModbusRecordService.class
