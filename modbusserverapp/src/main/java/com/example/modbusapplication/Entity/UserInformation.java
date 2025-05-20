@@ -37,11 +37,19 @@ public class UserInformation {
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
     }
+<<<<<<< HEAD
     public int getUserkey() {
         return userKey;
     }
     public void setUserkey(int userkey) {
         this.userKey = userkey;
+=======
+    public int getUserKey() {
+        return userKey;
+    }
+    public void setUserKey(int userKey) {
+        this.userKey = userKey;
+>>>>>>> c0d921221e3f0f6eb7148554f2064c5abe9b61a0
     }
     public String getUserId() {
         return userId;
@@ -57,8 +65,12 @@ public class UserInformation {
         this.loginPassword = loginPassword;
     }
 
+<<<<<<< HEAD
 
 
 
 
 }
+=======
+}
+>>>>>>> c0d921221e3f0f6eb7148554f2064c5abe9b61a0

@@ -38,6 +38,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+<<<<<<< HEAD
 		<dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-cache</artifactId>
@@ -49,6 +50,8 @@
 </dependency>
 
 
+=======
+>>>>>>> c0d921221e3f0f6eb7148554f2064c5abe9b61a0
 
 		<dependency>
     <groupId>mysql</groupId>

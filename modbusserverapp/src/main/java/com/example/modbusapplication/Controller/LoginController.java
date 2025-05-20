@@ -13,6 +13,7 @@ import com.example.modbusapplication.Service.LoginService;
 @RequestMapping("/api/auth")
 public class LoginController {
 
+<<<<<<< HEAD
     private final LoginService authService;
 
     public LoginController(LoginService authService) {
@@ -21,10 +22,21 @@ public class LoginController {
 
     @PostMapping("/init")
     public ResponseEntity<Map<String, String>> initAuth(HttpServletRequest request) {
+=======
+    private final LoginService loginService;
+
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
+
+    @PostMapping("/init")
+    public ResponseEntity<Map<String, String>> sendRandomNumber(HttpServletRequest request) {
+>>>>>>> c0d921221e3f0f6eb7148554f2064c5abe9b61a0
         String ipAddress = getClientIp(request);
         ipAddress = normalizeIp(ipAddress);
         System.out.println("Received IP Address: " + ipAddress);
 
+<<<<<<< HEAD
         String randomNumber = authService.storeAuthSession(ipAddress);
         return ResponseEntity.ok(Map.of("randomNumber", randomNumber));
     }
@@ -50,6 +62,31 @@ public class LoginController {
             return ResponseEntity.status(401).body(Map.of("success", false, "error", "Invalid username or password"));
         }
     }
+=======
+        String randomNumber = loginService.storeLoginInfo(ipAddress);
+        return ResponseEntity.ok(Map.of("randomNumber", randomNumber));
+    }
+
+@PostMapping("/login")
+public ResponseEntity<?> loginUser(
+        @RequestBody Map<String, String> requestBody,
+        HttpServletRequest request) {
+
+    String hashedCredential = requestBody.get("hashedCredential");
+    String ip = normalizeIp(getClientIp(request));
+
+    Map<String,Object> loginPayload = loginService.loginResponse(hashedCredential, ip);
+    if (loginPayload != null) {
+        return ResponseEntity.ok(loginPayload);
+    } else {
+        return ResponseEntity
+            .status(401)
+            .body(Map.of("success", false, "error", "Invalid username or password"));
+    }
+}
+
+
+>>>>>>> c0d921221e3f0f6eb7148554f2064c5abe9b61a0
 
    private String getClientIp(HttpServletRequest request) {
     String ip = request.getHeader("X-Forwarded-For");
@@ -62,7 +99,11 @@ public class LoginController {
         return ip;
     }
 
+<<<<<<< HEAD
     return request.getRemoteAddr(); // fallback
+=======
+    return request.getRemoteAddr();
+>>>>>>> c0d921221e3f0f6eb7148554f2064c5abe9b61a0
 }
 
 
@@ -73,4 +114,23 @@ public class LoginController {
         }
         return ip;
     }
+<<<<<<< HEAD
+=======
+
+@PostMapping("/update-credentials")
+public ResponseEntity<?> updateCredentials(@RequestBody Map<String, String> requestBody) {
+    String oldUserId = requestBody.get("oldUserId");
+    String oldPassword = requestBody.get("oldPassword");
+    String newUserId = requestBody.get("newUserId");      // can be null
+    String newPassword = requestBody.get("newPassword");  // can be null
+
+    if (oldUserId == null || oldPassword == null) {
+        return ResponseEntity.badRequest().body(Map.of("error", "Old userId and password are required"));
+    }
+
+    return loginService.updateUserIdPassword(oldUserId, oldPassword, newUserId, newPassword);
+}
+
+
+>>>>>>> c0d921221e3f0f6eb7148554f2064c5abe9b61a0
 }
