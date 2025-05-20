@@ -30,10 +30,6 @@ public class LoginInformation {
     public void setStatus(boolean status) {
         this.status = status;
     }
-
-    // public Long getId() {
-    //     return id;
-    // }
     public String getIpAddress() {
         return ipAddress;
     }

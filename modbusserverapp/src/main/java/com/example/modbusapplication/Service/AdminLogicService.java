@@ -1,6 +1,5 @@
 package com.example.modbusapplication.Service;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -9,10 +8,12 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.example.modbusapplication.Entity.DeviceMapping;
 import com.example.modbusapplication.Entity.UserInformation;
+import com.example.modbusapplication.Model.RegDeviceDAO;
 // import com.example.modbusapplication.Entity.loginInformation;
 import com.example.modbusapplication.Repository.DeviceMappingRepository;
 import com.example.modbusapplication.Repository.ModbusRecordRepository;
@@ -31,15 +32,16 @@ public class AdminLogicService {
 
     @Autowired
     DeviceMappingRepository deviceMappingRepository;
- public ResponseEntity<?> createNewTable(String deviceId) {
+
+    public ResponseEntity<?> createNewTable(String deviceId) {
         try {
-            try{
+            try {
                 short shDeviceId = Short.parseShort(deviceId);
                 DeviceMapping deviceMapping = new DeviceMapping(shDeviceId);
                 deviceMappingRepository.save(deviceMapping);
-            }
-            catch(DataIntegrityViolationException e){
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("The Device ID already present.Try different Device ID :(");
+            } catch (DataIntegrityViolationException e) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("The Device ID already present.Try different Device ID :(");
             }
             modbusRecordRepository.createTable(deviceId);
             return ResponseEntity.status(HttpStatus.CREATED).body("Table created sucessfully :)");
@@ -49,91 +51,76 @@ public class AdminLogicService {
         }
     }
 
-public Map<String, String> registerdevice(String deviceId, String deviceName, String companyName) {
-    Map<String, String> response = new HashMap<>();
-    try {
-        short userKey = (short)(100 + new Random().nextInt(30000));
-        String cleanedCompany = companyName.replaceAll("[^a-zA-Z0-9]", "");
+    public ResponseEntity<?> registerdevice(RegDeviceDAO regDeviceDAO) {
+        try {
+            if (!regDeviceDAO.isNewUser()) {
+                short userKey = (short) (100 + new Random().nextInt(30000));
+                regDeviceDAO.setUserKey(userKey);
+
+            }
+
+            if (!updateDeviceMapping(regDeviceDAO)) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("error", "Device ID not registered"));
+            }
+
+            if (!regDeviceDAO.isNewUser()) {
+                if (!createNewUser(regDeviceDAO)) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(Map.of("error", "Error while creating the new user"));
+                }
+            }
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(regDeviceDAO);
+        } catch (Exception e) {
+           return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        
+    }
+
+    public boolean createNewUser(RegDeviceDAO regDeviceDAO) {
+
+        String cleanedCompany = regDeviceDAO.getCompanyName().replaceAll("[^a-zA-Z0-9]", "");
         String userIdPart = cleanedCompany.length() >= 6 ? cleanedCompany.substring(0, 6) : cleanedCompany;
         userIdPart = String.format("%-6s", userIdPart).replace(' ', 'X').toUpperCase();
-        int deviceIdNumber = Integer.parseInt(deviceId);
-        String suffix = String.format("%05d", deviceIdNumber); 
+        int deviceIdNumber = regDeviceDAO.getDeviceId();
+        String suffix = String.format("%05d", deviceIdNumber);
 
         String userId = userIdPart + suffix;
         String password = suffix;
 
-        short shDeviceId = Short.parseShort(deviceId);
-        UserInformation user = new UserInformation(userKey, userId, password, companyName);
-        userRepository.save(user);
+        UserInformation user = new UserInformation(regDeviceDAO.getUserKey(), userId, password, regDeviceDAO.getCompanyName());
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            System.out.println("createNewUser :: Exception :: " + e);
+            return false;
+        }
+        regDeviceDAO.setUserId(userId);
+        regDeviceDAO.setPassword(password);
+        regDeviceDAO.setUserKey( regDeviceDAO.getUserKey());
+        return true;
 
-        saveOrUpdateDeviceMapping(shDeviceId, deviceName, userKey);
-
-        response.put("userId", userId);
-        response.put("password", password);
-
-    } catch (Exception e) {
-        response.put("error", "Error: " + e.getMessage());
-    }
-    return response;
-}
-
-public ResponseEntity<?> saveOrUpdateDeviceMapping(short deviceId, String deviceName, short userKey) {
-    Optional<DeviceMapping> existingMapping = deviceMappingRepository.findByDeviceId(deviceId);
-
-    if (existingMapping.isPresent()) {
-        DeviceMapping mapping = existingMapping.get();
-        mapping.setDeviceName(deviceName);
-        mapping.setUserKey(userKey);
-        deviceMappingRepository.save(mapping);
-        return ResponseEntity.ok("Device mapping updated successfully.");
-    } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                             .body("Error: Device ID " + deviceId + " not found. Cannot update.");
-    }
-}
-public ResponseEntity<?> findUserByCompanyName(String companyName) {
-    Optional<UserInformation> userOpt = userRepository.findByCompanyName(companyName);
-    if (userOpt.isPresent()) {
-        return ResponseEntity.ok(userOpt.get());
-    } else {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("User with company name '" + companyName + "' not found.");
-    }
-}
-
-@Transactional
-public ResponseEntity<?> mapDeviceToExistUser(String deviceId, String companyName) {
-    Optional<UserInformation> userOpt = userRepository.findByCompanyName(companyName);
-    if (userOpt.isEmpty()) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Company not found.");
     }
 
-    UserInformation user = userOpt.get();
-    short shDeviceId = Short.parseShort(deviceId);
-    // Check if deviceId already exists (optional but recommended)
-    Optional<DeviceMapping> existingMapping = deviceMappingRepository.findByDeviceId(shDeviceId);
-    if (existingMapping.isPresent()) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body("Device ID already mapped.");
+    public boolean updateDeviceMapping(RegDeviceDAO regDeviceDAO) {
+        try {
+            short deviceId = regDeviceDAO.getDeviceId();
+            Optional<DeviceMapping> existingMapping = deviceMappingRepository.findByDeviceId(deviceId);
+
+            if (existingMapping.isPresent()) {
+                DeviceMapping mapping = existingMapping.get();
+                mapping.setDeviceName(regDeviceDAO.getDeviceName());
+                mapping.setUserKey(regDeviceDAO.getUserKey());
+                deviceMappingRepository.save(mapping);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Exception" + e);
+        }
+        return false;
     }
-    short userkey = (short) user.getUserKey();
-
-    // Save new mapping
-    DeviceMapping mapping = new DeviceMapping();
-    mapping.setDeviceId(shDeviceId);
-    mapping.setUserKey(userkey); 
-
-
-    deviceMappingRepository.save(mapping);
-
-    return ResponseEntity.ok("Device ID mapped to user successfully.");
-}
-
 
 }
-
-
-
-
-
