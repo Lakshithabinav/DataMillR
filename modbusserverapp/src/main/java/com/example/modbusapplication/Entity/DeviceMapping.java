@@ -1,8 +1,8 @@
 package com.example.modbusapplication.Entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+// import jakarta.persistence.GeneratedValue;
+// import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -19,13 +19,22 @@ public class DeviceMapping {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // private Long id;
 
     private short userKey;
 
     private short deviceId;
 
     private String deviceName;
+
+    public DeviceMapping(short deviceId, String deviceName, short userKey) {
+        this.deviceId = deviceId;
+        this.deviceName = deviceName;
+        this.userKey = userKey;
+    }
+public DeviceMapping() {
+}
+
 
 }

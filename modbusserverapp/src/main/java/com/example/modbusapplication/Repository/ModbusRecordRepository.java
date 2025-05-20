@@ -17,6 +17,7 @@ public class ModbusRecordRepository {
     // Creating a table
     public void createTable(String deviceId) throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS modbus_data_" + deviceId.trim() + "(" +
+                "timestamp DATETIME NOT NULL," +
                 "batch_name  VARCHAR(15)," +
                 "set_weight  INT," +
                 "actual_weight INT," +
@@ -29,9 +30,10 @@ public class ModbusRecordRepository {
         try {
             String sql = "INSERT INTO modbus_data_" + modbusEntityDao.getDeviceId()
 
-                    + "(batch_name, set_weight, actual_weight, total_weight) VALUES (?, ?, ? ,?)";
+                    + "(timestamp, batch_name, set_weight, actual_weight, total_weight) VALUES (?, ?, ?, ? ,?)";
 
             jdbcTemplate.update(sql,
+                    modbusEntityDao.getTimestamp(),
                     modbusEntityDao.getBatchName(),
                     modbusEntityDao.getSetWeight(),
                     modbusEntityDao.getActualWeight(),

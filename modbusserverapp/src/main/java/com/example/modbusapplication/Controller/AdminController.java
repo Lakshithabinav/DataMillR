@@ -22,5 +22,15 @@ public class AdminController {
         System.out.println("deviceId ==" +deviceId);
         return adminLogicService.createNewTable(deviceId);
     }
+    @PostMapping("/register-device")
+    public ResponseEntity<?> registerDevice(
+        @RequestParam String deviceId,
+        @RequestParam String deviceName,
+        @RequestParam String companyName) {
+
+    return adminLogicService.createNewTable(deviceId, deviceName, companyName);
+
+}
+
 
 }
