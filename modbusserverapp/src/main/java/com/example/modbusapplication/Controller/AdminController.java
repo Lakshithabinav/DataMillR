@@ -33,8 +33,19 @@ public class AdminController {
         String companyName = request.get("companyName");
 
        Map<String, String> result = adminLogicService.registerdevice(deviceId, deviceName, companyName);
+        result.put("deviceId", deviceId);
+        result.put("deviceName", deviceName);
+        result.put("companyName", companyName);
 
     return ResponseEntity.ok(result);
 
     }
+
+  @PostMapping("/map-device-to-user")
+    public ResponseEntity<?> mapDeviceToUser(@RequestBody Map<String, String> request) {
+        String deviceId = request.get("deviceId");
+        String companyName = request.get("companyName");
+        return adminLogicService.mapDeviceToExistUser(deviceId, companyName);
+    }
+
 }

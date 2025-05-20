@@ -83,7 +83,7 @@ public ResponseEntity<?> updateCredentials(@RequestBody Map<String, String> requ
         return ResponseEntity.badRequest().body(Map.of("error", "Old userId and password are required"));
     }
 
-    return loginService.updateCredentials(oldUserId, oldPassword, newUserId, newPassword);
+    return loginService.updateUserIdPassword(oldUserId, oldPassword, newUserId, newPassword);
 }
 
 

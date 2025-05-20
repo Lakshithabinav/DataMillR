@@ -143,7 +143,7 @@ public void updateUserKeyAndStatus(String ipAddress, int userKey, boolean status
         System.out.println("Old login sessions cleaned at " + LocalDateTime.now());
 }
 
-public ResponseEntity<?> updateCredentials(String oldUserId, String oldPassword, String newUserId, String newPassword) {
+public ResponseEntity<?> updateUserIdPassword(String oldUserId, String oldPassword, String newUserId, String newPassword) {
     Optional<UserInformation> userOpt = userRepository.findByUserId(oldUserId);
 
     if (userOpt.isEmpty()) {

@@ -18,6 +18,8 @@ import com.example.modbusapplication.Repository.DeviceMappingRepository;
 import com.example.modbusapplication.Repository.ModbusRecordRepository;
 import com.example.modbusapplication.Repository.UserInformationRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class AdminLogicService {
 
@@ -99,6 +101,34 @@ public ResponseEntity<?> findUserByCompanyName(String companyName) {
     }
 }
 
+@Transactional
+public ResponseEntity<?> mapDeviceToExistUser(String deviceId, String companyName) {
+    Optional<UserInformation> userOpt = userRepository.findByCompanyName(companyName);
+    if (userOpt.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Company not found.");
+    }
+
+    UserInformation user = userOpt.get();
+    short shDeviceId = Short.parseShort(deviceId);
+    // Check if deviceId already exists (optional but recommended)
+    Optional<DeviceMapping> existingMapping = deviceMappingRepository.findByDeviceId(shDeviceId);
+    if (existingMapping.isPresent()) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("Device ID already mapped.");
+    }
+    short userkey = (short) user.getUserKey();
+
+    // Save new mapping
+    DeviceMapping mapping = new DeviceMapping();
+    mapping.setDeviceId(shDeviceId);
+    mapping.setUserKey(userkey); 
+
+
+    deviceMappingRepository.save(mapping);
+
+    return ResponseEntity.ok("Device ID mapped to user successfully.");
+}
 
 
 }

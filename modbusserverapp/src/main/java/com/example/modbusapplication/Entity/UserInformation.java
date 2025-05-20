@@ -57,8 +57,4 @@ public class UserInformation {
         this.loginPassword = loginPassword;
     }
 
-
-
-
-
 }
