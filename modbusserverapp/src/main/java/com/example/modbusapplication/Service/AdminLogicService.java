@@ -1,6 +1,5 @@
 package com.example.modbusapplication.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -8,7 +7,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.example.modbusapplication.Entity.DeviceMapping;
@@ -19,7 +18,7 @@ import com.example.modbusapplication.Repository.DeviceMappingRepository;
 import com.example.modbusapplication.Repository.ModbusRecordRepository;
 import com.example.modbusapplication.Repository.UserInformationRepository;
 
-import jakarta.transaction.Transactional;
+
 
 @Service
 public class AdminLogicService {

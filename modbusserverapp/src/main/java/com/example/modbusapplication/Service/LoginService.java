@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.example.modbusapplication.Entity.DeviceMapping;
 import com.example.modbusapplication.Entity.LoginInformation;
 import com.example.modbusapplication.Entity.UserInformation;
+import com.example.modbusapplication.Model.UpdateUserDAO;
 import com.example.modbusapplication.Repository.DeviceMappingRepository;
 import com.example.modbusapplication.Repository.LoginInformationRepository;
 import com.example.modbusapplication.Repository.UserInformationRepository;
@@ -143,34 +144,35 @@ public void updateUserKeyAndStatus(String ipAddress, int userKey, boolean status
         System.out.println("Old login sessions cleaned at " + LocalDateTime.now());
 }
 
-public ResponseEntity<?> updateUserIdPassword(String oldUserId, String oldPassword, String newUserId, String newPassword) {
-    Optional<UserInformation> userOpt = userRepository.findByUserId(oldUserId);
+public ResponseEntity<?> updateUserIdPassword(UpdateUserDAO updateUserDAO) {
+    Optional<UserInformation> userOpt = userRepository.findByUserId(updateUserDAO.getOldUserId());
 
     if (userOpt.isEmpty()) {
         return ResponseEntity.status(404).body(Map.of("error", "User ID not found"));
     }
 
     UserInformation user = userOpt.get();
-    if (!user.getPassword().equals(oldPassword)) {
+    if (!user.getPassword().equals(updateUserDAO.getOldPassword())) {
         return ResponseEntity.status(401).body(Map.of("error", "Old password is incorrect"));
     }
 
     boolean updated = false;
-    if (newUserId != null && !newUserId.trim().isEmpty()) {
-        user.setUserId(newUserId);
+    if (updateUserDAO.getNewUserId() != null && !updateUserDAO.getNewUserId().trim().isEmpty()) {
+        user.setUserId(updateUserDAO.getNewUserId());
         updated = true;
     }
-    if (newPassword != null && !newPassword.trim().isEmpty()) {
-        user.setPassword(newPassword);
+    if (updateUserDAO.getNewPassword() != null && !updateUserDAO.getNewPassword().trim().isEmpty()) {
+        user.setPassword(updateUserDAO.getNewPassword());
         updated = true;
     }
 
     if (updated) {
-        userRepository.save(user);
+        userRepository.save(user); 
         return ResponseEntity.ok(Map.of("message", "Credentials updated successfully"));
     } else {
         return ResponseEntity.badRequest().body(Map.of("error", "No new credentials provided to update"));
     }
 }
+
 
 }
