@@ -5,10 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.modbusapplication.Model.ModbusDataRequestDAO;
+import com.example.modbusapplication.Model.ModbusEntityDao;
 import com.example.modbusapplication.Model.RawRecordDTO;
 import com.example.modbusapplication.Service.ModbusRecordService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -41,5 +44,19 @@ public class ModbusController {
                     .body("Failed to store any records.");
         }
     }
+
+@PostMapping("/data")
+public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
+    try {
+        List<ModbusEntityDao> data = modbusRecordService.fetchModbusData(requestDAO);
+        return ResponseEntity.ok(data);
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body(Map.of("error", "Something went wrong"));
+    }
+}
+
+
 
 }

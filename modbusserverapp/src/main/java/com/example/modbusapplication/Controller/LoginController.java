@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.modbusapplication.Model.UpdateUserDAO;
 import com.example.modbusapplication.Service.LoginService;
 
 @RestController
@@ -73,18 +74,14 @@ public ResponseEntity<?> loginUser(
     }
 
 @PostMapping("/update-credentials")
-public ResponseEntity<?> updateCredentials(@RequestBody Map<String, String> requestBody) {
-    String oldUserId = requestBody.get("oldUserId");
-    String oldPassword = requestBody.get("oldPassword");
-    String newUserId = requestBody.get("newUserId");      // can be null
-    String newPassword = requestBody.get("newPassword");  // can be null
-
-    if (oldUserId == null || oldPassword == null) {
+public ResponseEntity<?> updateCredentials(@RequestBody UpdateUserDAO updateUserDAO) {
+    if (updateUserDAO.getOldUserId() == null || updateUserDAO.getOldPassword() == null) {
         return ResponseEntity.badRequest().body(Map.of("error", "Old userId and password are required"));
     }
 
-    return loginService.updateUserIdPassword(oldUserId, oldPassword, newUserId, newPassword);
+    return loginService.updateUserIdPassword(updateUserDAO);
 }
+
 
 
 }

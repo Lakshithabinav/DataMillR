@@ -1,6 +1,8 @@
 package com.example.modbusapplication.Repository;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,5 +46,24 @@ public class ModbusRecordRepository {
                     "Exception on insertDataEntity :: DeviceID ::" + modbusEntityDao.getDeviceId() + " :: " + e);
         }
     }
+    
+   public List<ModbusEntityDao> getDataByDeviceIdAndDateRange(short deviceId, LocalDateTime start, LocalDateTime end) {
+    String tableName = "modbus_data_" + deviceId;
+    String sql = "SELECT timestamp, batch_name, set_weight, actual_weight, total_weight FROM " + tableName +
+                 " WHERE timestamp BETWEEN ? AND ?";
+
+    return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        ModbusEntityDao entity = new ModbusEntityDao();
+        entity.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+        entity.setBatchName(rs.getString("batch_name"));
+        entity.setSetWeight(rs.getInt("set_weight"));
+        entity.setActualWeight(rs.getInt("actual_weight"));
+        entity.setTotalWeight(rs.getInt("total_weight"));
+        entity.setDeviceId(deviceId);
+        return entity;
+    }, start, end); 
+}
+
+
 
 }
