@@ -29,6 +29,7 @@ public class AdminController {
 
     @PostMapping("/register-device")
     public ResponseEntity<?> registerDevice(@RequestBody RegDeviceDAO regDeviceDAO) {
+        System.out.println("");
         return adminLogicService.registerdevice(regDeviceDAO);
 
     }
