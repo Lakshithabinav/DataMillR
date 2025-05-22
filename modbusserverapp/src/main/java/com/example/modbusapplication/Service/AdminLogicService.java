@@ -1,10 +1,14 @@
 package com.example.modbusapplication.Service;
 
+
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.example.modbusapplication.Entity.DeviceMapping;
 import com.example.modbusapplication.Entity.UserInformation;
 import com.example.modbusapplication.Model.RegDeviceDAO;
+import com.example.modbusapplication.Model.SearchCompanyDao;
 // import com.example.modbusapplication.Entity.loginInformation;
 import com.example.modbusapplication.Repository.DeviceMappingRepository;
 import com.example.modbusapplication.Repository.ModbusRecordRepository;
@@ -52,7 +57,7 @@ public class AdminLogicService {
 
     public ResponseEntity<?> registerdevice(RegDeviceDAO regDeviceDAO) {
         try {
-            if (!regDeviceDAO.isNewUser()) {
+            if (regDeviceDAO.isNewUser()) {
                 short userKey = (short) (100 + new Random().nextInt(30000));
                 regDeviceDAO.setUserKey(userKey);
 
@@ -63,20 +68,21 @@ public class AdminLogicService {
                         .body(Map.of("error", "Device ID not registered"));
             }
 
-            if (!regDeviceDAO.isNewUser()) {
+            if (regDeviceDAO.isNewUser()) {
                 if (!createNewUser(regDeviceDAO)) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(Map.of("error", "Error while creating the new user"));
                 }
             }
-            
+
             return ResponseEntity.status(HttpStatus.CREATED).body(regDeviceDAO);
         } catch (Exception e) {
-           return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-        
+
     }
 
+    @CacheEvict(value = "companyNames", allEntries = true)
     public boolean createNewUser(RegDeviceDAO regDeviceDAO) {
 
         String cleanedCompany = regDeviceDAO.getCompanyName().replaceAll("[^a-zA-Z0-9]", "");
@@ -88,16 +94,19 @@ public class AdminLogicService {
         String userId = userIdPart + suffix;
         String password = suffix;
 
-        UserInformation user = new UserInformation(regDeviceDAO.getUserKey(), userId, password, regDeviceDAO.getCompanyName());
+        UserInformation user = new UserInformation(regDeviceDAO.getUserKey(), userId, password,
+                regDeviceDAO.getCompanyName());
         try {
             userRepository.save(user);
         } catch (Exception e) {
+            e.printStackTrace(); 
             System.out.println("createNewUser :: Exception :: " + e);
             return false;
         }
         regDeviceDAO.setUserId(userId);
         regDeviceDAO.setPassword(password);
-        regDeviceDAO.setUserKey( regDeviceDAO.getUserKey());
+        regDeviceDAO.setUserKey(regDeviceDAO.getUserKey());
+        System.out.println("Returning: " + regDeviceDAO.getUserId() + ", " + regDeviceDAO.getPassword());
         return true;
 
     }
@@ -120,6 +129,18 @@ public class AdminLogicService {
             System.out.println("Exception" + e);
         }
         return false;
+    }
+
+    @Cacheable("companyNames")
+    public List<SearchCompanyDao> getCompanyName() {
+        return userRepository.findAllCompanyName();
+    }
+
+
+    public List<SearchCompanyDao> searchCompanyName(String companyName) {
+        List<SearchCompanyDao> allUsers = getCompanyName();
+        SimpleSearchEngine engine = new SimpleSearchEngine(allUsers);
+        return engine.search(companyName);
     }
 
 }

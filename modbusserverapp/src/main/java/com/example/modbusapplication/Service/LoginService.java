@@ -1,14 +1,13 @@
 package com.example.modbusapplication.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,6 +16,8 @@ import org.springframework.stereotype.Service;
 import com.example.modbusapplication.Entity.DeviceMapping;
 import com.example.modbusapplication.Entity.LoginInformation;
 import com.example.modbusapplication.Entity.UserInformation;
+import com.example.modbusapplication.Model.DeviceNameDAO;
+import com.example.modbusapplication.Model.LoginResponseDAO;
 import com.example.modbusapplication.Model.UpdateUserDAO;
 import com.example.modbusapplication.Repository.DeviceMappingRepository;
 import com.example.modbusapplication.Repository.LoginInformationRepository;
@@ -59,7 +60,7 @@ public class LoginService {
         return randomNumber;
     }
 
- public Map<String,Object> loginResponse(String hashedCredential, String ipAddress) {
+public ResponseEntity<LoginResponseDAO> loginResponse(String hashedCredential, String ipAddress) {
         // 1) find session
         Optional<LoginInformation> sessionOpt = authSessionRepository.findByIpAddress(ipAddress);
         if (sessionOpt.isEmpty()) return null;
@@ -88,30 +89,43 @@ public class LoginService {
         // 5) build response payload
     List<DeviceMapping> devices = deviceMappingRepository.findByUserKey((short) user.getUserKey());
 
-    List<Map<String, Object>> deviceList = devices.stream().map(d -> {
-    Map<String, Object> map = new HashMap<>();
-    map.put("deviceId", d.getDeviceId());
-    map.put("deviceName", d.getDeviceName());
-    return map;
-}).collect(Collectors.toList());
-
-
-        Map<String,Object> resp = new HashMap<>();
-        resp.put("success", true);
-        resp.put("companyName", user.getCompanyName());
-        resp.put("devices", deviceList);
-        return resp;
+    Map<String, List<Short>> deviceMap = new HashMap<>();
+    for (DeviceMapping device : devices) {
+        deviceMap.computeIfAbsent(device.getDeviceName(), k -> new ArrayList<>()).add(device.getDeviceId());
     }
 
-public void updateUserKeyAndStatus(String ipAddress, int userKey, boolean status) {
-    Optional<LoginInformation> sessionOpt = authSessionRepository.findByIpAddress(ipAddress);
-    if (sessionOpt.isPresent()) {
-        LoginInformation session = sessionOpt.get();
-        session.setUserKey(userKey);
-        session.setStatus(status);
-        authSessionRepository.save(session);
+    List<String> deviceNames = new ArrayList<>();
+    List<Short> deviceIds = new ArrayList<>();
+
+    for (DeviceMapping device : devices) {
+        deviceNames.add(device.getDeviceName());
+        deviceIds.add(device.getDeviceId());
     }
-}
+
+    List<DeviceNameDAO> deviceList = new ArrayList<>();
+    deviceList.add(new DeviceNameDAO(deviceNames, deviceIds));
+
+    LoginResponseDAO response = new LoginResponseDAO(
+        user.getUserId(),
+        user.getUserKey(),
+        user.getCompanyName(),
+        deviceList
+    );
+
+    return ResponseEntity.ok(response);
+
+
+    }
+
+    public void updateUserKeyAndStatus(String ipAddress, int userKey, boolean status) {
+        Optional<LoginInformation> sessionOpt = authSessionRepository.findByIpAddress(ipAddress);
+        if (sessionOpt.isPresent()) {
+            LoginInformation session = sessionOpt.get();
+            session.setUserKey(userKey);
+            session.setStatus(status);
+            authSessionRepository.save(session);
+        }
+    }
 
 
   public String decodeAscii(String encodedText, int randomNumber) {

@@ -12,11 +12,14 @@ import com.example.modbusapplication.Entity.LoginInformation;
 
 import jakarta.transaction.Transactional;
 
-public interface LoginInformationRepository extends JpaRepository<LoginInformation, Long>{
+public interface LoginInformationRepository extends JpaRepository<LoginInformation, Long> {
     Optional<LoginInformation> findByIpAddress(String ipAddress);
-     @Modifying
+
+    @Modifying
     @Transactional
     @Query("DELETE FROM LoginInformation l WHERE l.hitTime < :cutoff")
     void deleteOlderThan(@Param("cutoff") LocalDateTime cutoff);
+
+   
 
 }
