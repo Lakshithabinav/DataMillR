@@ -12,18 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.modbusapplication.Model.ModbusDataRequestDAO;
 import com.example.modbusapplication.Model.ModbusEntityDao;
-import com.example.modbusapplication.Service.ModbusRecordService;
+import com.example.modbusapplication.Service.UserService;
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    private ModbusRecordService modbusRecordService;
+    private UserService userService;
 
     @PostMapping("/data")
 public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
     try {
-        List<ModbusEntityDao> data = modbusRecordService.fetchModbusData(requestDAO);
+        List<ModbusEntityDao> data = userService.fetchModbusData(requestDAO);
         return ResponseEntity.ok(data);
     } catch (IllegalArgumentException e) {
         return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
