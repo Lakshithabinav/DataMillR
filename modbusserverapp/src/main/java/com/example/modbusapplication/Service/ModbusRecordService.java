@@ -62,12 +62,21 @@ public class ModbusRecordService {
                         case "datetime":
                             timestamp = LocalDateTime.parse(
                                 record.getRegisters().substring(0, 19),
-                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                            );
+                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                             break;
-                        case "deviceId":
-                            deviceId = Short.parseShort(record.getRegisters());
+                       case "deviceId":
+                            String rawDeviceId = record.getRegisters();
+                            if (rawDeviceId != null && !rawDeviceId.trim().isEmpty()) {
+                                try {
+                                    deviceId = Short.parseShort(rawDeviceId.trim());
+                                } catch (NumberFormatException e) {
+                                    System.err.println("Invalid deviceId value: " + rawDeviceId);
+                                }
+                            } else {
+                             System.err.println("Empty or null deviceId value");
+                            }
                             break;
+
                     }
                 }
 

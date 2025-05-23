@@ -75,6 +75,18 @@ public class AdminLogicService {
                 }
             }
 
+            if (!regDeviceDAO.isNewUser()) {
+                if (regDeviceDAO.getUserKey() == 0) {
+                    Optional<UserInformation> user = userRepository.findByCompanyName(regDeviceDAO.getCompanyName());
+                    if (user.isPresent()) {
+                        regDeviceDAO.setUserKey((short) user.get().getUserKey());
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "Cannot find user by company name"));
+                    }
+                }
+            }
+
             return ResponseEntity.status(HttpStatus.CREATED).body(regDeviceDAO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

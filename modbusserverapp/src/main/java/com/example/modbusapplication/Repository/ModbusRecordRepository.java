@@ -62,6 +62,24 @@ public class ModbusRecordRepository {
         entity.setDeviceId(deviceId);
         return entity;
     }, start, end); 
+
+}
+
+public List<ModbusEntityDao> getAllDataByDeviceId(short deviceId) {
+    String tableName = "modbus_data_" + deviceId;
+    String sql = "SELECT timestamp, batch_name, set_weight, actual_weight, total_weight FROM " 
+               + tableName + " ORDER BY timestamp DESC Limit 1";
+
+    return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        ModbusEntityDao entity = new ModbusEntityDao();
+        entity.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+        entity.setBatchName(rs.getString("batch_name"));
+        entity.setSetWeight(rs.getInt("set_weight"));
+        entity.setActualWeight(rs.getInt("actual_weight"));
+        entity.setTotalWeight(rs.getInt("total_weight"));
+        entity.setDeviceId(deviceId);
+        return entity;
+    });
 }
 
 

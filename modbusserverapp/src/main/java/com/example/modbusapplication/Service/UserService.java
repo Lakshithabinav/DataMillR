@@ -29,10 +29,6 @@ public class UserService {
         throw new IllegalArgumentException("Device ID must be provided");
     }
 
-    if (startDateStr == null && endDateStr == null) {
-        throw new IllegalArgumentException("At least one date must be provided");
-    }
-
     LocalDateTime start;
     LocalDateTime end;
 
@@ -42,10 +38,13 @@ public class UserService {
             LocalDate endDate = LocalDate.parse(endDateStr, formatter);
             start = startDate.atStartOfDay();
             end = endDate.atTime(23, 59, 59);
-        } else {
+        } else if (startDateStr != null || endDateStr != null) {
             LocalDate singleDate = LocalDate.parse(startDateStr != null ? startDateStr : endDateStr, formatter);
             start = singleDate.atStartOfDay();
             end = singleDate.atTime(23, 59, 59);
+        } else {
+            // No date provided, get all records for the device
+            return modbusRecordRepository.getAllDataByDeviceId(deviceId);
         }
     } catch (Exception e) {
         throw new IllegalArgumentException("Invalid date format. Expected: yyyy-MM-dd");
