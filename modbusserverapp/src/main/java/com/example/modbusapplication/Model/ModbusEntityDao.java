@@ -13,17 +13,11 @@ public class ModbusEntityDao {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private LocalDateTime timestamp;
-
     private String batchName;
-
     private int setWeight;
-
     private int actualWeight;
-
     private int totalWeight;
-
     private Short deviceId;
 
     public ModbusEntityDao() {

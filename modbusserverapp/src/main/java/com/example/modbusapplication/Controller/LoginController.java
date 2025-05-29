@@ -30,6 +30,7 @@ public class LoginController {
         return ResponseEntity.ok(Map.of("randomNumber", randomNumber));
     }
 
+
 @PostMapping("/login")
 public ResponseEntity<?> loginUser(
         @RequestBody Map<String, String> requestBody,
@@ -38,15 +39,10 @@ public ResponseEntity<?> loginUser(
     String hashedCredential = requestBody.get("hashedCredential");
     String ip = normalizeIp(getClientIp(request));
 
-    Map<String,Object> loginPayload = loginService.loginResponse(hashedCredential, ip);
-    if (loginPayload != null) {
-        return ResponseEntity.ok(loginPayload);
-    } else {
-        return ResponseEntity
-            .status(401)
-            .body(Map.of("success", false, "error", "Invalid username or password"));
-    }
+    return loginService.loginResponse(hashedCredential, ip);
 }
+
+
 
 
 

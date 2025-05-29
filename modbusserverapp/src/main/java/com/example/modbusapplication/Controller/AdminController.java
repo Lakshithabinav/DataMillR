@@ -3,14 +3,10 @@ package com.example.modbusapplication.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.modbusapplication.Model.RegDeviceDAO;
 import com.example.modbusapplication.Model.SearchCompanyDao;
 import com.example.modbusapplication.Service.AdminLogicService;
-
-import java.util.*;
-
-
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
