@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import './userLogin.css';
+import './Userlogin.css';
 import axios from 'axios';
 
-const Timesheet = () => {
+const Timesheet = ({ onLoginSuccess }) => {
     const [userIdInput, setUserIdInput] = useState('');
     const [userPasswordInput, setUserPasswordInput] = useState('');
     const [randomNumber, setRandomNumber] = useState(null);
@@ -66,10 +66,8 @@ const Timesheet = () => {
 
         const userIdAsciiArray = convertToAscii(userIdInput);
         const passwordAsciiArray = convertToAscii(userPasswordInput);
-
         const encodedUserId = processAsciiValues(userIdAsciiArray, randomNumber);
         const encodedPassword = processAsciiValues(passwordAsciiArray, randomNumber);
-
         const separator = '124 124 124';
         const finalProcessedResult = `${encodedUserId} ${separator} ${encodedPassword}`;
 
@@ -78,7 +76,10 @@ const Timesheet = () => {
         })
         .then((response) => {
             if (response.data?.success === true) {
+                sessionStorage.setItem('userData', JSON.stringify(response.data));
                 setLoginMessage('Login successful!');
+                if (onLoginSuccess) onLoginSuccess();
+                window.location.href = '/user'; // 🔁 Redirect using URL
             } else {
                 setLoginMessage('Invalid username or password. Please try again.');
             }
@@ -89,10 +90,14 @@ const Timesheet = () => {
         });
     };
 
+    const handleAdminClick = () => {
+        window.location.href = '/admin'; // 🔁 Redirect to admin manually
+    };
+
     return (
         <div className="container">
             <div className="left-section">
-                <h1 className="company-name">RAISON AUTOMATION</h1>
+                <h1 className="company-name">DataMillr</h1>
             </div>
             <div className="right-section">
                 <h1>Welcome Back!</h1>
@@ -113,9 +118,18 @@ const Timesheet = () => {
                         onChange={(e) => setUserPasswordInput(e.target.value)}
                         placeholder="Enter your password"
                     />
-                    <button type="submit" disabled={randomNumber === null}>
-                        {randomNumber === null ? 'Loading...' : 'Log In'}
-                    </button>
+                    <div className="button-row">
+                        <button type="submit" disabled={randomNumber === null}>
+                            {randomNumber === null ? 'Loading...' : 'Log In'}
+                        </button>
+                        <button
+                            type="button"
+                            className="admin-button"
+                            onClick={handleAdminClick}
+                        >
+                            Admin
+                        </button>
+                    </div>
                 </form>
                 {loginMessage && <p className="login-message">{loginMessage}</p>}
             </div>
