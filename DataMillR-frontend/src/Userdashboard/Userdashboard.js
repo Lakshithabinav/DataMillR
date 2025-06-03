@@ -53,106 +53,195 @@ const UserDashboard = () => {
   if (notLoggedIn) return <p>User not logged in. Please go back to login page.</p>;
   if (!userData) return <p>Loading dashboard...</p>;
 
-  const { devices = [], companyName = '' } = userData;
+  const { devices = [] } = userData;
 
-  // Logout handler without router
   const handleLogout = () => {
     sessionStorage.clear();
-    window.location.href = '/Userlogin/Userlogin.js'; // Change '/login' to your actual login page path if needed
+    window.location.href = '/';
   };
 
-  return (
-    <div id="tomoveright">
-      <div id="move">
-        {/* Header with Logout button */}
-        <div className="taskbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <center style={{ flex: 1 , fontSize: 35}}>
-            {companyName.charAt(0).toUpperCase() + companyName.slice(1)}
-          </center>
-          <button
-            onClick={handleLogout}
-            style={{
-              backgroundColor: '#5D5C61',
-              color: 'white',
-              border: 'none',
-              borderRadius: '5px',
-              padding: '8px 15px',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              marginRight: '10px',
-              flexShrink: 0,
-            }}
-          >
-            Logout
-          </button>
-        </div>
+  const handleReport = () => {
+    window.history.pushState({}, '', '/report');
+    window.location.reload(); 
+  };
 
-        {/* Device Selector */}
-        <div className="device-selector">
-          <p>Select Device:</p>
-          <div className="device-boxes-scroll">
-            <div className="device-boxes">
-              {devices.map((device) => (
-                <div
-                  key={device.deviceId}
-                  onClick={() => setSelectedDeviceId(device.deviceId)}
-                  className={`device-box ${selectedDeviceId === device.deviceId ? 'active' : ''}`}
-                >
-                  {device.deviceName}
-                </div>
-              ))}
+return (
+  <div id="move">
+    <div
+      className="taskbar"
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 20px',
+        background: '#5D5C61',
+        borderRadius: '0',
+        boxShadow: 'none',
+      }}
+    >
+      <div style={{ flex: 1 }}>
+        <button
+          onClick={handleReport}
+          style={{
+            backgroundColor: 'white',
+            color: '#5D5C61',
+            border: 'none',
+            borderRadius: '5px',
+            padding: '8px 15px',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+          }}
+        >
+          Report
+        </button>
+      </div>
+      <div style={{ flex: 1, textAlign: 'center' }}>
+        <span style={{ fontSize: 35, fontWeight: 'bold' }}>
+          Current Status
+        </span>
+      </div>
+      <div style={{ flex: 1, textAlign: 'right' }}>
+        <button
+          onClick={handleLogout}
+          style={{
+            backgroundColor: 'white',
+            color: '#5D5C61',
+            border: 'none',
+            borderRadius: '5px',
+            padding: '8px 15px',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+          }}
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <div className="device-selector" style={{ padding: '20px' }}>
+      <p style={{ fontWeight: 'bold' }}>Select Device:</p>
+      <div className="device-boxes-scroll" style={{ overflowX: 'auto' }}>
+        <div
+          className="device-boxes"
+          style={{
+            display: 'flex',
+            gap: '10px',
+            flexWrap: 'wrap',
+          }}
+        >
+          {devices.map((device) => (
+            <div
+              key={device.deviceId}
+              onClick={() => setSelectedDeviceId(device.deviceId)}
+              className={`device-box ${selectedDeviceId === device.deviceId ? 'active' : ''}`}
+              style={{
+                padding: '10px 15px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+                backgroundColor: selectedDeviceId === device.deviceId ? '#5D5C61' : '#f0f0f0',
+                color: selectedDeviceId === device.deviceId ? 'white' : '#333',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+              }}
+            >
+              {device.deviceName}
             </div>
-          </div>
-        </div>
-
-        {/* Data Display */}
-        <div className="data-section">
-          {selectedDeviceId && deviceData.length > 0 ? (
-            deviceData.map((row, index) => (
-              <div key={index} className="data-card">
-                <div className="data-header">
-                  Last Updated: {lastUpdated ? lastUpdated.toLocaleTimeString() : '...'}
-                </div>
-
-                <div className="data-row">
-                  <div className="data-box">
-                    <strong>Timestamp:</strong>
-                    <br />
-                    {new Date(row.timestamp).toLocaleString()}
-                  </div>
-                  <div className="data-box">
-                    <strong>Batch Name:</strong>
-                    <br />
-                    {row.batchName}
-                  </div>
-                </div>
-
-                <div className="data-row">
-                  <div className="data-box">
-                    <strong>Set Weight:</strong>
-                    <br />
-                    {row.setWeight}
-                  </div>
-                  <div className="data-box">
-                    <strong>Actual Weight:</strong>
-                    <br />
-                    {row.actualWeight}
-                  </div>
-                  <div className="data-box">
-                    <strong>Total Weight:</strong>
-                    <br />
-                    {row.totalWeight}
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : selectedDeviceId ? (
-            <p>No data available for this device.</p>
-          ) : null}
+          ))}
         </div>
       </div>
     </div>
-  );
+
+    <div className="data-section" style={{ padding: '20px' }}>
+      {selectedDeviceId && deviceData.length > 0 ? (
+        deviceData.map((row, index) => (
+          <div
+            key={index}
+            className="data-card"
+            style={{
+              border: '1px solid #ddd',
+              borderRadius: '10px',
+              padding: '20px',
+              marginBottom: '20px',
+              backgroundColor: '#fff',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+              position: 'relative',
+            }}
+          >
+            <div
+              className="data-header"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '10px',
+              }}
+            >
+              <div>
+                <strong>Machine Status:</strong>{' '}
+                <span
+                  style={{
+                    color: row.machineRunning ? 'green' : 'red',
+                    fontWeight: 'bold',
+                    marginLeft: '5px',
+                  }}
+                >
+                  {row.machineRunning ? 'Running' : 'Stopped'}
+                </span>
+              </div>
+              <div style={{ position: 'absolute', top: 20, right: 20 }}>
+                <strong>Last Updated:</strong>{' '}
+                {lastUpdated ? lastUpdated.toLocaleTimeString() : '...'}
+              </div>
+            </div>
+
+            <div
+              style={{
+                fontSize: '18px',
+                fontWeight: 'bold',
+                marginBottom: '10px',
+              }}
+            >
+              Batch Name: {row.batchName}
+            </div>
+
+            <div
+              className="data-row"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '20px',
+                flexWrap: 'wrap',
+              }}
+            >
+              <div className="data-box" style={{ minWidth: '200px' }}>
+                <strong>Timestamp:</strong>
+                <br />
+                {new Date(row.timestamp).toLocaleString()}
+              </div>
+              <div className="data-box" style={{ minWidth: '150px' }}>
+                <strong>Set Weight:</strong>
+                <br />
+                {row.setWeight}
+              </div>
+              <div className="data-box" style={{ minWidth: '150px' }}>
+                <strong>Actual Weight:</strong>
+                <br />
+                {row.actualWeight}
+              </div>
+              <div className="data-box" style={{ minWidth: '150px' }}>
+                <strong>Total Weight:</strong>
+                <br />
+                {row.totalWeight}
+              </div>
+            </div>
+          </div>
+        ))
+      ) : selectedDeviceId ? (
+        <p>No data available for this device.</p>
+      ) : null}
+    </div>
+  </div>
+);
 };
 
-export default UserDashboard;
+export default UserDashboard; 

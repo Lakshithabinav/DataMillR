@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.modbusapplication.Model.ModbusDataRequestDAO;
 import com.example.modbusapplication.Model.ModbusEntityDao;
 import com.example.modbusapplication.Service.UserService;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -21,17 +22,15 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/data")
-public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
-    try {
-        List<ModbusEntityDao> data = userService.fetchModbusData(requestDAO);
-        return ResponseEntity.ok(data);
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-    } catch (Exception e) {
-        return ResponseEntity.internalServerError().body(Map.of("error", "Something went wrong"));
+    public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
+        try {
+            List<ModbusEntityDao> data = userService.fetchModbusData(requestDAO);
+            return ResponseEntity.ok(data);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", "Something went wrong"));
+        }
     }
-}
-
-
 
 }

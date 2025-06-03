@@ -8,13 +8,15 @@
 }
 
 #move {
-  width: 95%;
+  width: 100%;
   max-width: 1800px;
   background-color: #EAE4D5;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   margin: auto;
   box-sizing: border-box;
+  height: 650px;
+  margin-right: 253px;
 }
 
 /* Taskbar */
@@ -126,17 +128,19 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
   font-size: 0.9rem;
+  width: 203%;
 }
 
 .data-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   font-size: 0.75rem;
   color: #666;
   font-weight: 600;
   margin-bottom: 10px;
 }
 
+/* Data rows and boxes */
 .data-row {
   display: flex;
   gap: 15px;
@@ -158,36 +162,21 @@
 @media (max-width: 768px) {
   #tomoveright {
     padding: 1rem;
-    width: 430px;
-    height: 826px;;
+    width: 100%;
+    height: auto;
   }
 
-  .device-boxes {
-    gap: 8px;
-  }
-
-  .device-box {
-    min-width: 120px;
-    font-size: 0.85rem;
-    padding: 8px 16px;
-
-  }
-
-  .data-row {
-    flex-direction: column;
-    gap: 10px;
-    height: 155px;
-  }
-
-  .data-section {
-    grid-template-columns: 1fr;
+  #move {
+    height: auto;
+    margin-right: 0;
+    padding: 1rem;
   }
 
   .taskbar {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
     font-size: 1.5rem;
+    gap: 10px;
   }
 
   .company-name {
@@ -203,5 +192,30 @@
 
   .admin-button {
     display: none !important;
+  }
+
+  .device-boxes {
+    gap: 8px;
+  }
+
+  .device-box {
+    min-width: 120px;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+  }
+
+  .data-section {
+    grid-template-columns: 1fr;
+  }
+
+  .data-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .data-header {
+    margin-right: 0;
+    justify-content: center;
+    text-align: center;
   }
 }

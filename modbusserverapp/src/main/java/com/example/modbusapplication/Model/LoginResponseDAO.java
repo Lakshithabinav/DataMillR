@@ -12,5 +12,6 @@ public class LoginResponseDAO {
     private String userId;
     private int userKey;
     private String companyName;
+    private boolean isLoginSucess;
     private List<DeviceNameDAO> devices;
 }

@@ -32,14 +32,13 @@ const Timesheet = ({ onLoginSuccess }) => {
 
                 if (ipResponse.data?.ip) {
                     setUserIp(ipResponse.data.ip);
+
                     const randomNumberResponse = await axios.post('http://localhost:8082/api/auth/init', {
                         ip: ipResponse.data.ip,
                     });
 
                     if (randomNumberResponse.data?.randomNumber !== undefined) {
                         setRandomNumber(randomNumberResponse.data.randomNumber);
-                    } else {
-                        console.error('Random number not found in the response');
                     }
                 }
             } catch (error) {
@@ -64,6 +63,19 @@ const Timesheet = ({ onLoginSuccess }) => {
             return;
         }
 
+        // ✅ Check new user credentials from sessionStorage
+        const storedId = sessionStorage.getItem('newUserId');
+        const storedPass = sessionStorage.getItem('newUserPassword');
+
+        if (userIdInput === storedId && userPasswordInput === storedPass) {
+            sessionStorage.setItem('userData', JSON.stringify({ userId: storedId }));
+            setLoginMessage('New user login successful!');
+            if (onLoginSuccess) onLoginSuccess();
+            window.location.href = '/user';
+            return;
+        }
+
+        // Continue to regular backend login
         const userIdAsciiArray = convertToAscii(userIdInput);
         const passwordAsciiArray = convertToAscii(userPasswordInput);
         const encodedUserId = processAsciiValues(userIdAsciiArray, randomNumber);
@@ -75,11 +87,12 @@ const Timesheet = ({ onLoginSuccess }) => {
             hashedCredential: finalProcessedResult
         })
         .then((response) => {
-            if (response.data?.success === true) {
+            console.log(response);
+            if (response.data.loginSucess) {
                 sessionStorage.setItem('userData', JSON.stringify(response.data));
                 setLoginMessage('Login successful!');
                 if (onLoginSuccess) onLoginSuccess();
-                window.location.href = '/user'; // 🔁 Redirect using URL
+                window.location.href = '/user';
             } else {
                 setLoginMessage('Invalid username or password. Please try again.');
             }
@@ -91,7 +104,11 @@ const Timesheet = ({ onLoginSuccess }) => {
     };
 
     const handleAdminClick = () => {
-        window.location.href = '/admin'; // 🔁 Redirect to admin manually
+        window.location.href = '/admin';
+    };
+
+    const handleForgotPasswordClick = () => {
+        window.location.href = '/newuser';
     };
 
     return (
@@ -110,6 +127,7 @@ const Timesheet = ({ onLoginSuccess }) => {
                         onChange={(e) => setUserIdInput(e.target.value)}
                         placeholder="Enter your userId"
                     />
+
                     <label htmlFor="userPassword">Password</label>
                     <input
                         type="password"
@@ -118,19 +136,23 @@ const Timesheet = ({ onLoginSuccess }) => {
                         onChange={(e) => setUserPasswordInput(e.target.value)}
                         placeholder="Enter your password"
                     />
+
                     <div className="button-row">
                         <button type="submit" disabled={randomNumber === null}>
                             {randomNumber === null ? 'Loading...' : 'Log In'}
                         </button>
-                        <button
-                            type="button"
-                            className="admin-button"
-                            onClick={handleAdminClick}
-                        >
+                        <button type="button" className="admin-button" onClick={handleAdminClick}>
                             Admin
                         </button>
                     </div>
+
+                    <div className="forgot-password">
+                        <button type="button" className="link-button" onClick={handleForgotPasswordClick}>
+                            New User
+                        </button>
+                    </div>
                 </form>
+
                 {loginMessage && <p className="login-message">{loginMessage}</p>}
             </div>
         </div>

@@ -4,24 +4,30 @@ import jakarta.persistence.Entity;
 // import jakarta.persistence.GeneratedValue;
 // import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 @Entity
+@Getter
+@Setter
 public class UserInformation {
      @Id
     // @GeneratedValue(strategy = GenerationType.IDENTITY)
     // private Long id;
-    private Integer userKey;
+    private short userKey;
     private String userId;
     private String loginPassword; 
     private String companyName;
+    private boolean isNewUser;
 
     public UserInformation() {
     }
 
-    public UserInformation(int userKey, String userId, String loginPassword, String companyName) {
+    public UserInformation(short userKey, String userId, String loginPassword, String companyName, boolean isNewUser) {
     this.userKey = userKey;
     this.userId = userId;
     this.loginPassword = loginPassword;
     this.companyName = companyName;
+    this.isNewUser = isNewUser;
 }
 
     // public Long getId() {
@@ -31,30 +37,5 @@ public class UserInformation {
     //  public void setId(Long id) {
     //      this.id = id;
     //  }
-    public String getCompanyName() {
-        return companyName;
-    }
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-    public int getUserKey() {
-        return userKey;
-    }
-    public void setUserKey(int userKey) {
-        this.userKey = userKey;
-    }
-    public String getUserId() {
-        return userId;
-    }
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return loginPassword;
-    }
-    public void setPassword(String loginPassword) {
-        this.loginPassword = loginPassword;
-    }
 
 }
