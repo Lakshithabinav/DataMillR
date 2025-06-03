@@ -101,6 +101,21 @@ public class ModbusRecordService {
         }
     }
 
+    public boolean storeData(ModbusEntityDao modbusEntityDao){
+
+        try{
+             modbusRecordRepository.insertDataEntity(modbusEntityDao);
+            return true;
+
+        }catch(Exception e){
+            
+            System.out.println("Exception Storing data :"+e);
+            return false;
+        }
+    }
+
+
+
 
   
 }
