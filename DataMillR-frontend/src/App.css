@@ -36,3 +36,124 @@
     transform: rotate(360deg);
   }
 } */
+/* App.css */
+.App {
+  height: 100vh;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* Logo Bar */
+.logo-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1000;
+  background-color: white;
+}
+
+.logo-img {
+  height: 40px;
+  object-fit: contain;
+  max-width: 45%;
+}
+
+/* Top Bar */
+.topbar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background-color: #5D5C61;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-weight: bold;
+  font-size: 18px;
+  z-index: 999;
+  flex-wrap: wrap;
+}
+
+.topbar-links {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  justify-content: center;
+  text-align: center;
+}
+
+.topbar-links span {
+  cursor: pointer;
+  color: lightgray;
+}
+
+.topbar-links span.active {
+  color: white;
+  text-decoration: underline;
+}
+
+.logout-button {
+  background-color: white;
+  color: #5D5C61;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Main Content */
+.main-content {
+  overflow-y: auto;
+  height: calc(100vh - 80px);
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 16px;
+  }
+
+  .logo-bar {
+    padding: 0 10px;
+  }
+
+  .logo-img {
+    height: 35px;
+  }
+
+  .logout-button {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+
+  .topbar-links {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+/* App.css */
+
+/* Common scrollable container */
+.scrollable-container {
+  overflow-y: auto;
+}
+
+/* Hide scrollbar but allow scroll */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

@@ -112,6 +112,13 @@ function Dashboard() {
       const res = await axios.post("http://localhost:8082/admin/register-device", payload);
       const data = res.data;
 
+      // ✅ Store new user credentials in sessionStorage
+      if (data.newUser && data.userId && data.password) {
+        sessionStorage.setItem("newUserId", data.userId);
+        sessionStorage.setItem("newUserPassword", data.password);
+        sessionStorage.setItem("isNewUser", "true");
+      }
+
       setPopupData({
         deviceName,
         deviceId,
