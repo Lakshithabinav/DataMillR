@@ -20,44 +20,41 @@ public class ModbusRecordRepository {
     public void createTable(String deviceId) throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS modbus_data_" + deviceId.trim() + "(" +
                 "timestamp DATETIME NOT NULL," +
+                "status  INT," +
                 "batch_name  VARCHAR(15)," +
                 "set_weight  INT," +
-                "actual_weight INT," +
+                "present_weight INT," +
                 "total_weight INT)";
         System.out.println("sql === " + sql);
         jdbcTemplate.execute(sql);
     }
 
     public void insertDataEntity(ModbusEntityDao modbusEntityDao) {
-        try {
-            String sql = "INSERT INTO modbus_data_" + modbusEntityDao.getDeviceId()
+    String sql = "INSERT INTO modbus_data_" + modbusEntityDao.getDeviceId()
+            + " (timestamp, status, batch_name, set_weight, present_weight, total_weight) VALUES (?, ?, ?, ?, ?, ?)";
 
-                    + "(timestamp, batch_name, set_weight, actual_weight, total_weight) VALUES (?, ?, ?, ? ,?)";
+    jdbcTemplate.update(sql,
+            modbusEntityDao.getTimestamp(),
+            modbusEntityDao.getStatus(),
+            modbusEntityDao.getBatchName(),
+            modbusEntityDao.getSetWeight(),
+            modbusEntityDao.getPresentWeight(),
+            modbusEntityDao.getTotalWeight());
+}
 
-            jdbcTemplate.update(sql,
-                    modbusEntityDao.getTimestamp(),
-                    modbusEntityDao.getBatchName(),
-                    modbusEntityDao.getSetWeight(),
-                    modbusEntityDao.getActualWeight(),
-                    modbusEntityDao.getTotalWeight());
-
-        } catch (Exception e) {
-            System.out.println(
-                    "Exception on insertDataEntity :: DeviceID ::" + modbusEntityDao.getDeviceId() + " :: " + e);
-        }
-    }
     
    public List<ModbusEntityDao> getDataByDeviceIdAndDateRange(short deviceId, LocalDateTime start, LocalDateTime end) {
     String tableName = "modbus_data_" + deviceId;
-    String sql = "SELECT timestamp, batch_name, set_weight, actual_weight, total_weight FROM " + tableName +
+    String sql = "SELECT timestamp, status, batch_name, set_weight, present_weight, total_weight FROM " + tableName +
                  " WHERE timestamp BETWEEN ? AND ?";
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> {
         ModbusEntityDao entity = new ModbusEntityDao();
         entity.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+        entity.setStatus(rs.getInt("status"));
         entity.setBatchName(rs.getString("batch_name"));
         entity.setSetWeight(rs.getInt("set_weight"));
-        entity.setActualWeight(rs.getInt("actual_weight"));
+        entity.setPresentWeight(rs.getInt("present_weight"));
         entity.setTotalWeight(rs.getInt("total_weight"));
         entity.setDeviceId(deviceId);
         return entity;
@@ -67,19 +64,37 @@ public class ModbusRecordRepository {
 
 public List<ModbusEntityDao> getAllDataByDeviceId(short deviceId) {
     String tableName = "modbus_data_" + deviceId;
-    String sql = "SELECT timestamp, batch_name, set_weight, actual_weight, total_weight FROM " 
+    String sql = "SELECT timestamp, status, batch_name, set_weight, present_weight, total_weight FROM " 
                + tableName + " ORDER BY timestamp DESC Limit 1";
 
     return jdbcTemplate.query(sql, (rs, rowNum) -> {
         ModbusEntityDao entity = new ModbusEntityDao();
         entity.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+        entity.setStatus(rs.getInt("status"));
         entity.setBatchName(rs.getString("batch_name"));
         entity.setSetWeight(rs.getInt("set_weight"));
-        entity.setActualWeight(rs.getInt("actual_weight"));
+        entity.setPresentWeight(rs.getInt("present_weight"));
         entity.setTotalWeight(rs.getInt("total_weight"));
         entity.setDeviceId(deviceId);
         return entity;
     });
+}
+public List<ModbusEntityDao> fetchDataBtwnDates(String startDate,String endDate,short deviceId){
+     String tableName = "modbus_data_" + deviceId;
+      String sql = "SELECT timestamp, status, batch_name, set_weight, present_weight, total_weight FROM " 
+               + tableName + " where timestamp >="+startDate+" and timestamp<="+endDate;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        ModbusEntityDao entity = new ModbusEntityDao();
+        entity.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+        entity.setStatus(rs.getInt("status"));
+        entity.setBatchName(rs.getString("batch_name"));
+        entity.setSetWeight(rs.getInt("set_weight"));
+        entity.setPresentWeight(rs.getInt("present_weight"));
+        entity.setTotalWeight(rs.getInt("total_weight"));
+        entity.setDeviceId(deviceId);
+        return entity;
+    });        
+
 }
 
 

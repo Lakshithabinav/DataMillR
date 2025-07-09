@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.example.modbusapplication.Model.ModbusEntityDao;
 import com.example.modbusapplication.Model.ModbusRecord;
 import com.example.modbusapplication.Repository.ModbusRecordRepository;
+
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.time.LocalDateTime;
@@ -15,8 +16,8 @@ import java.util.List;
 @Service
 public class ModbusRecordService {
 
-   @Autowired
-   ModbusRecordRepository modbusRecordRepository;
+    @Autowired
+    ModbusRecordRepository modbusRecordRepository;
 
     public boolean decodeAndStore(String base64Data) {
         try {
@@ -27,7 +28,7 @@ public class ModbusRecordService {
 
                 Object obj = ois.readObject();
                 if (!(obj instanceof List<?>)) {
-                    System.err.println("mDecoded object is not a list");
+                    System.err.println("❌ Decoded object is not a list.");
                     return false;
                 }
 
@@ -39,6 +40,7 @@ public class ModbusRecordService {
 
                 // Extract fields
                 String batchName = null;
+                int status =0;
                 int setWeight = 0;
                 int actualWeight = 0;
                 int totalWeight = 0;
@@ -47,6 +49,9 @@ public class ModbusRecordService {
 
                 for (ModbusRecord record : records) {
                     switch (record.getName()) {
+                        case "status":
+                            status = Integer.parseInt(record.getRegisters());
+                            break;
                         case "batchName":
                             batchName = record.getRegisters();
                             break;
@@ -61,46 +66,56 @@ public class ModbusRecordService {
                             break;
                         case "datetime":
                             timestamp = LocalDateTime.parse(
-                                record.getRegisters().substring(0, 19),
-                                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                                    record.getRegisters().substring(0, 19),
+                                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                             break;
-                       case "deviceId":
+                        case "deviceId":
                             String rawDeviceId = record.getRegisters();
                             if (rawDeviceId != null && !rawDeviceId.trim().isEmpty()) {
                                 try {
                                     deviceId = Short.parseShort(rawDeviceId.trim());
                                 } catch (NumberFormatException e) {
-                                    System.err.println("Invalid deviceId value: " + rawDeviceId);
+                                    System.err.println("❌ Invalid deviceId value: " + rawDeviceId);
                                 }
                             } else {
-                             System.err.println("Empty or null deviceId value");
+                                System.err.println("❌ Empty or null deviceId value");
                             }
                             break;
-
                     }
                 }
 
                 if (deviceId == null || batchName == null) {
-                    System.err.println("Missing required fields (timestamp or batchName)");
+                    System.err.println("❌ Missing required fields (timestamp or batchName)");
                     return false;
                 }
 
-                ModbusEntityDao modbusEntityDao = new ModbusEntityDao(timestamp, batchName, setWeight, actualWeight, totalWeight, deviceId);
-                
-                modbusRecordRepository.insertDataEntity(modbusEntityDao);
-                
+                ModbusEntityDao modbusEntityDao = new ModbusEntityDao(timestamp,status, batchName, setWeight, actualWeight, totalWeight, deviceId);
 
-                System.out.println("Record saved to database: " + modbusEntityDao);
-                return true;
+                try {
+                    modbusRecordRepository.insertDataEntity(modbusEntityDao);
+                    System.out.println("✅ Record saved to database: " + modbusEntityDao);
+                    return true;
+                } catch (Exception e) {
+                    System.err.println("❌ Exception on insertDataEntity :: DeviceID ::" + deviceId + " :: " + e.getMessage());
+                    return false;
+                }
+
             }
 
         } catch (Exception e) {
-            System.err.println("Error decoding/storing record: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("❌ Error decoding/storing record: " + e.getMessage());
             return false;
         }
     }
 
-
-  
+    public boolean storeData(ModbusEntityDao modbusEntityDao) {
+        try {
+            modbusRecordRepository.insertDataEntity(modbusEntityDao);
+            System.out.println("✅ Record saved to database: " + modbusEntityDao);
+            return true;
+        } catch (Exception e) {
+            System.err.println("❌ Exception storing data: " + e.getMessage());
+            return false;
+        }
+    }
 }

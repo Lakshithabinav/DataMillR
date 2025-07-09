@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.example.modbusapplication.Entity.UserInformation;
 import com.example.modbusapplication.Model.SearchCompanyDao;
 
-public interface UserInformationRepository extends JpaRepository<UserInformation, Integer> {
+public interface UserInformationRepository extends JpaRepository<UserInformation, Long> {
     @Query("SELECT MAX(u.userKey) FROM UserInformation u")
     Integer findMaxUserKey();
 

@@ -54,8 +54,7 @@ public class AdminLogicService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in inserting in table.");
         }
     }
-
-    public ResponseEntity<?> registerdevice(RegDeviceDAO regDeviceDAO) {
+   public ResponseEntity<?> registerdevice(RegDeviceDAO regDeviceDAO) {
         try {
             if (regDeviceDAO.isNewUser()) {
                 short userKey = (short) (100 + new Random().nextInt(30000));
@@ -63,7 +62,7 @@ public class AdminLogicService {
 
             }
 
-            if (!updateDeviceMapping(regDeviceDAO)) {
+            if (!checkDeviceMapping(regDeviceDAO)) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(Map.of("error", "Device ID not registered"));
             }
@@ -75,25 +74,13 @@ public class AdminLogicService {
                 }
             }
 
-            if (!regDeviceDAO.isNewUser()) {
-                if (regDeviceDAO.getUserKey() == 0) {
-                    Optional<UserInformation> user = userRepository.findByCompanyName(regDeviceDAO.getCompanyName());
-                    if (user.isPresent()) {
-                        regDeviceDAO.setUserKey((short) user.get().getUserKey());
-                    } else {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "Cannot find user by company name"));
-                    }
-                }
-            }
-
             return ResponseEntity.status(HttpStatus.CREATED).body(regDeviceDAO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
     }
-
+    
     @CacheEvict(value = "companyNames", allEntries = true)
     public boolean createNewUser(RegDeviceDAO regDeviceDAO) {
 
@@ -107,7 +94,7 @@ public class AdminLogicService {
         String password = suffix;
 
         UserInformation user = new UserInformation(regDeviceDAO.getUserKey(), userId, password,
-                regDeviceDAO.getCompanyName());
+                regDeviceDAO.getCompanyName(),true);
         try {
             userRepository.save(user);
         } catch (Exception e) {
@@ -123,7 +110,7 @@ public class AdminLogicService {
 
     }
 
-    public boolean updateDeviceMapping(RegDeviceDAO regDeviceDAO) {
+    public boolean checkDeviceMapping(RegDeviceDAO regDeviceDAO) {
         try {
             short deviceId = regDeviceDAO.getDeviceId();
             Optional<DeviceMapping> existingMapping = deviceMappingRepository.findByDeviceId(deviceId);
