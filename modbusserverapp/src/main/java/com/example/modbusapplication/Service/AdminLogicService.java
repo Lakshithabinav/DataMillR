@@ -54,6 +54,25 @@ public class AdminLogicService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in inserting in table.");
         }
     }
+
+        public ResponseEntity<?> createPackingTable(String deviceId) {
+        try {
+            try {
+                short shDeviceId = Short.parseShort(deviceId);
+                DeviceMapping deviceMapping = new DeviceMapping(shDeviceId);
+                deviceMappingRepository.save(deviceMapping);
+            } catch (DataIntegrityViolationException e) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("The Device ID already present.Try different Device ID :(");
+            }
+            modbusRecordRepository.packing_createTable(deviceId);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Table created sucessfully :)");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in inserting in table.");
+        }
+    }
+
    public ResponseEntity<?> registerdevice(RegDeviceDAO regDeviceDAO) {
         try {
             if (regDeviceDAO.isNewUser()) {

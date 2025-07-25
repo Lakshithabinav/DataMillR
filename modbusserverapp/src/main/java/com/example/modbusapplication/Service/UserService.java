@@ -34,19 +34,21 @@ public Object fetchModbusDataFlexible(ModbusDataRequestDAO requestDAO) {
     List<ModbusEntityDao> rows;
 
     try {
-        if (startDateStr == null && endDateStr == null) {
-            return modbusRecordRepository.getAllDataByDeviceId(deviceId); 
-        }
+     boolean packingMachine = modbusRecordRepository.isPackingMachine(deviceId);
 
+
+    if (startDateStr == null && endDateStr == null) {
+        return packingMachine
+            ? modbusRecordRepository.getAllPackingDataByDeviceId(deviceId)
+            : modbusRecordRepository.getAllDataByDeviceId(deviceId);
+    }
         LocalDateTime start, end;
 
         if (startDateStr != null && endDateStr == null) {
-            // ✅ deviceId + startDate
             LocalDate date = LocalDate.parse(startDateStr, formatter);
             start = date.atStartOfDay();
             end = date.atTime(23, 59, 59);
         } else if (startDateStr != null && endDateStr != null) {
-            // ✅ deviceId + full date range
             LocalDate startDate = LocalDate.parse(startDateStr, formatter);
             LocalDate endDate = LocalDate.parse(endDateStr, formatter);
             start = startDate.atStartOfDay();
@@ -88,7 +90,7 @@ private ModbusGroupedBatchResponse groupRowsByBatch(List<ModbusEntityDao> allRow
         }
     }
 
-    if (currentGroup != null && currentGroup.getBatchMiddledata() != null && !currentGroup.getBatchMiddledata().isEmpty()) {
+    if (currentGroup != null && currentGroup.getBatchMiddledata() != null && !currentGroup.getBatchMiddledata().isEmpty()) { 
         List<ModbusEntityDao> data = currentGroup.getBatchMiddledata();
         currentGroup.setBatchStartdata(data.get(0));
         currentGroup.setBatchEnddata(data.get(data.size() - 1));
@@ -99,5 +101,5 @@ private ModbusGroupedBatchResponse groupRowsByBatch(List<ModbusEntityDao> allRow
     response.setBatch(batchGroups);
     return response;
 }
-
+   
 }

@@ -22,10 +22,16 @@ public class AdminController {
     @Autowired
     AdminLogicService adminLogicService;
 
-    @PostMapping("/create-table")
+    @PostMapping("/veyor-table")
     public ResponseEntity<?> createTable(@RequestParam String deviceId) {
         System.out.println("deviceId ==" + deviceId);
         return adminLogicService.createNewTable(deviceId);
+    }
+
+        @PostMapping("/packing-table")
+    public ResponseEntity<?> packingcreateTable(@RequestParam String deviceId) {
+        System.out.println("deviceId ==" + deviceId);
+        return adminLogicService.createPackingTable(deviceId);
     }
 
     @PostMapping("/register-device")

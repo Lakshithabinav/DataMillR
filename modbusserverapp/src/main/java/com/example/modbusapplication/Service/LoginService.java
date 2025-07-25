@@ -113,7 +113,7 @@ public class LoginService {
                 user.getUserId(),
                 user.getUserKey(),
                 user.getCompanyName(),
-
+                true,
                 user.isNewUser(),
                 deviceList);
 
