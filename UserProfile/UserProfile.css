@@ -1,0 +1,17 @@
+.profile-container {
+  padding: 30px;
+  background-color: #f7f7f7;
+  max-width: 600px;
+  margin: 40px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.profile-info {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.profile-info strong {
+  color: #333;
+}

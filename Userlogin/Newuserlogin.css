@@ -1,0 +1,133 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(to bottom, #e0f7ff, #b3e5fc); /* Sky blue gradient */
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #2c3e50; /* Darker blue-grey for contrast */
+}
+
+.newuser-container {
+  background-color: #ffffff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  width: 485px;
+  box-sizing: border-box;
+  margin-left: -40px;
+  margin-right: -39px;
+  margin-bottom: 105px;
+}
+
+.newuser-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 24px;
+  color: #0077b6; /* Sky blue heading */
+}
+
+.newuser-input {
+  width: 95%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #90caf9; /* Light blue border */
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.newuser-input:focus {
+  border-color: #2196f3; /* Focus blue */
+  outline: none;
+}
+
+.newuser-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #0288d1; /* Sky blue button */
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.newuser-button:hover {
+  background-color: #0277bd;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.success-message {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #d0f8ff; /* Light sky blue */
+  border: 1px solid #90e0ef;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.success-message pre {
+  background-color: #e1f5fe;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-size: 13px;
+  margin-top: 10px;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none;    /* Firefox */
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .newuser-container {
+    width: 104%;
+    margin: 0 10px;
+    padding: 25px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-left: 2px;
+  }
+
+  .newuser-container h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .newuser-input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .newuser-button {
+    font-size: 14px;
+    padding: 10px;
+    width: 100px;
+  }
+
+  .success-message {
+    font-size: 13px;
+    padding: 12px;
+  }
+
+  .success-message pre {
+    font-size: 12px;
+  }
+}

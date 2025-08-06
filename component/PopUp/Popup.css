@@ -1,0 +1,127 @@
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-box {
+  background: white;
+  padding: 30px 40px;
+  border-radius: 8px;
+  width: 300px;
+  max-width: 90%;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+  text-align: center;
+}
+
+.popup-animate {
+  animation: popup-scale 0.3s ease-in-out;
+}
+
+@keyframes popup-scale {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  45% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.popup-close {
+  position: absolute;
+  top: -15px;
+  right: -12px;
+  background: #535155;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  width: 10px;
+  padding: 5px 20px;
+  margin:0px;
+}
+
+.popup-title-failure {
+  color: red !important;
+}
+
+.popup-title {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.popup-message {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.popup-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.popup-basic {
+  background-color: #4fa0d0;
+}
+.popup-success {
+  background-color: #4ad890;
+}
+.popup-error {
+  background-color: #ef5289;
+}
+.popup-question {
+  background-color: #ff9800;
+}
+@media (max-width: 480px) {
+  .popup-box {
+    width: 90%;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .popup-title {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .popup-message {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .popup-button {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .popup-close {
+    top: -10px;
+    right: -10px;
+    font-size: 14px;
+    width: auto;
+    padding: 5px 12px;
+  }
+}

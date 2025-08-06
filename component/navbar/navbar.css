@@ -1,0 +1,159 @@
+/* Full fixed navbar header */
+.navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo styles */
+.navbar-logo {
+  height: 50px;
+  max-width: 100px;
+  object-fit: contain;
+}
+
+/* Company name centered */
+.company-name {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #0077b6;
+  flex: 1;
+  text-align: center;
+  padding: 0 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Topbar below navbar */
+.topbar {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background-color: #00a093;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  font-weight: bold;
+  font-size: 18px;
+  z-index: 999;
+}
+
+/* Topbar menu */
+.topbar-menu {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Menu link style */
+.topbar-menu span {
+  cursor: pointer;
+  color: lightgray;
+  transition: color 0.3s, text-decoration 0.3s;
+  white-space: nowrap;
+}
+
+.topbar-menu span.active {
+  color: white;
+  text-decoration: underline;
+}
+
+/* Logout button */
+.logout-button {
+  background-color: white;
+  color: #5D5C61;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  white-space: nowrap;
+  width: 111px;
+  margin-right:27px;
+  margin-top:1px;
+  height:40px;
+}
+
+.logout-button:hover {
+  background-color: #e2e2e2;
+  transform: scale(1.05);
+}
+
+body {
+  padding-top: 120px;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .navbar-logo {
+    height: 35px;
+    max-width: 80px;
+  }
+
+  .company-name {
+    font-size: 1.2rem;
+    padding: 0 5px;
+  }
+
+  .topbar {
+    flex-direction: row;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .topbar-menu {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .logout-button {
+    padding: 6px 12px;
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  body {
+    padding-top: 140px; /* More top space on mobile */
+    height:107vh;
+  }
+}
+.topbar-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.profile-button {
+  background-color: #fff;
+  color: #5D5C61;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  height:40px;
+  margin-top:2px;
+}
+
+.profile-button:hover {
+  background-color: #fff;
+}
