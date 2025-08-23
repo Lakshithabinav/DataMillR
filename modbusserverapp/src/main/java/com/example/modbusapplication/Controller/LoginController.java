@@ -24,11 +24,12 @@ public class LoginController {
     public ResponseEntity<Map<String, String>> sendRandomNumber(HttpServletRequest request) {
         String ipAddress = getClientIp(request);
         ipAddress = normalizeIp(ipAddress);
-        System.out.println("Received IP Address: " + ipAddress);
+        // System.out.println("Received IP Address: " + ipAddress);
 
         String randomNumber = loginService.storeLoginInfo(ipAddress);
         return ResponseEntity.ok(Map.of("randomNumber", randomNumber));
     }
+
 
 
 @PostMapping("/login")
@@ -38,6 +39,8 @@ public ResponseEntity<?> loginUser(
 
     String hashedCredential = requestBody.get("hashedCredential");
     String ip = normalizeIp(getClientIp(request));
+// System.out.println("Received encodedUserId: " + hashedCredential);
+// System.out.println("Decoded userId: " + decodedUserId);
 
     return loginService.loginResponse(hashedCredential, ip);
 }

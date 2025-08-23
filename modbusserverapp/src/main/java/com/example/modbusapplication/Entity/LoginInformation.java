@@ -2,6 +2,7 @@ package com.example.modbusapplication.Entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,7 @@ public class LoginInformation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true) 
     private String ipAddress;
     private String randomNumber;
     private LocalDateTime hitTime;

@@ -42,6 +42,7 @@ public class ModbusRecordService {
                 // Extract fields
                 String batchName = null;
                 int status =0;
+                int flowrate =0;
                 int setWeight = 0;
                 int actualWeight = 0;
                 int totalWeight = 0;
@@ -51,6 +52,9 @@ public class ModbusRecordService {
                 for (ModbusRecord record : records) {
                     switch (record.getName()) {
                         case "status":
+                            status = Integer.parseInt(record.getRegisters());
+                            break;
+                        case "flowrate":
                             status = Integer.parseInt(record.getRegisters());
                             break;
                         case "batchName":
@@ -90,7 +94,7 @@ public class ModbusRecordService {
                     return false;
                 }
 
-                ModbusEntityDao modbusEntityDao = new ModbusEntityDao(timestamp,status, batchName, setWeight, actualWeight, totalWeight, deviceId);
+                ModbusEntityDao modbusEntityDao = new ModbusEntityDao(timestamp, status, flowrate, batchName, setWeight, actualWeight, totalWeight, deviceId);
 
                 try {
                     modbusRecordRepository.insertDataEntity(modbusEntityDao);

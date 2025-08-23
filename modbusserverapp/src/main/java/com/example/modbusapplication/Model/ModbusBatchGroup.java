@@ -10,6 +10,6 @@ public class ModbusBatchGroup {
 
     private ModbusEntityDao batchStartdata;
     private ModbusEntityDao batchEnddata;
-    private List<ModbusEntityDao> batchMiddledata;
+    private List<ModbusEntityDao> batchdata;
 
 }

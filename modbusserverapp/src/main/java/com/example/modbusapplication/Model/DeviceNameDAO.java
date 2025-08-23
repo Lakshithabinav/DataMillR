@@ -3,12 +3,16 @@ package com.example.modbusapplication.Model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
+
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class DeviceNameDAO {
-    private List<String> deviceName;
-    private List<Short> deviceIds;
+    private String deviceName;
+    private Short deviceIds;
+    private String machineName;
+    private Double totalWeight;
+    private Double setWeight;
+    private String batchName;
 }

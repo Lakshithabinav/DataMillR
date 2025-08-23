@@ -20,6 +20,7 @@ public class ModbusEntityDao {
     // Old structure (legacy)
     private int status;
     private String batchName;
+    private int flowrate;
     private int setWeight;
     private int presentWeight;
     private int totalWeight;
@@ -32,10 +33,11 @@ public class ModbusEntityDao {
     }
 
     // Old structure constructor
-    public ModbusEntityDao(LocalDateTime timestamp, int status, String batchName, int setWeight, int presentWeight, int totalWeight,
+    public ModbusEntityDao(LocalDateTime timestamp, int status, int flowrate, String batchName, int setWeight, int presentWeight, int totalWeight,
             Short deviceId) {
         this.timestamp = timestamp;
         this.status = status;
+        this.flowrate = flowrate;
         this.batchName = batchName;
         this.setWeight = setWeight;
         this.presentWeight = presentWeight;
