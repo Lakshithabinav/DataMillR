@@ -5,11 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.modbusapplication.Model.DailyDataDao;
 import com.example.modbusapplication.Model.ModbusEntityDao;
 import com.example.modbusapplication.Model.PackingEntityDao;
 import com.example.modbusapplication.Model.RawRecordDTO;
 import com.example.modbusapplication.Service.ModbusRecordService;
 
+import java.util.Hashtable;
 import java.util.List;
 
 @RestController
@@ -23,10 +25,13 @@ public class ModbusController {
     @PostMapping("/upload-bytes")
     public ResponseEntity<String> modbusRecords(@RequestBody List<RawRecordDTO> rawRecordDTOList) {
         System.out.println("Received encoded DTO records: " + rawRecordDTOList.size());
+        Hashtable<Short,DailyDataDao> dailyDataDaoHT = new Hashtable<>();
 
         int successCount = 0;
         for (RawRecordDTO dto : rawRecordDTOList) {
-            boolean success = modbusRecordService.decodeAndStore(dto.getEncByteString());
+            boolean success = modbusRecordService.decodeAndStore(dto.getEncByteString(),dailyDataDaoHT);
+            modbusRecordService.updateDailyData(dailyDataDaoHT); 
+            
             if (success) {
                 successCount++;
             } else {

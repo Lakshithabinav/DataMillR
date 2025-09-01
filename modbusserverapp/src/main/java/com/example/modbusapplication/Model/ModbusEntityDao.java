@@ -24,7 +24,9 @@ public class ModbusEntityDao {
     private int setWeight;
     private int presentWeight;
     private int totalWeight;
+    private int noOfTotalWeight = 0;
     private Short deviceId;
+    private boolean isEndOfBatch;
     private String machinetype = "Flow Veyor";
 
 
