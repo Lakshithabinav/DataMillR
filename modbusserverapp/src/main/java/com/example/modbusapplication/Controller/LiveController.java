@@ -23,7 +23,7 @@ public class LiveController {
     @Autowired
     private PackingLiveGraghService packingService;
     @Autowired
-    FlowRepository flowRepository;
+    private FlowRepository flowRepository;
 
 
 // @PostMapping("/last/data")
@@ -44,7 +44,7 @@ public class LiveController {
 @PostMapping("/last/data")
 public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
     try {
-        short deviceId = requestDAO.getDeviceId();  // ✅ use request deviceId
+        short deviceId = requestDAO.getDeviceId();
 
         Object response = flowRepository.getLastDataByDeviceId(deviceId);
 
@@ -65,7 +65,7 @@ public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO request
     }
 }
 
- @PostMapping("/data")
+ @PostMapping("/gragh/data")
     public ResponseEntity<?> fetchModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
         try {
             Short deviceId = requestDAO.getDeviceId();
@@ -77,10 +77,8 @@ public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO request
 
             Object response;
             if (packingMachine) {
-                // route to packing service
                 response = packingService.fetchModbusDataFlexible(requestDAO);
             } else {
-                // route to normal flow service
                 response = flowService.fetchModbusDataFlexible(requestDAO);
             }
 
