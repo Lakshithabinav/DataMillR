@@ -22,7 +22,7 @@ import com.example.modbusapplication.Model.ModbusEntityDao;
 import com.example.modbusapplication.Model.UpdateUserDAO;
 import com.example.modbusapplication.Repository.DeviceMappingRepository;
 import com.example.modbusapplication.Repository.LoginInformationRepository;
-import com.example.modbusapplication.Repository.ModbusRecordRepository;
+import com.example.modbusapplication.Repository.FlowRepository;
 import com.example.modbusapplication.Repository.UserInformationRepository;
 
 import jakarta.transaction.Transactional;
@@ -37,7 +37,7 @@ public class LoginService {
     @Autowired
     LoginInformationRepository authSessionRepository;
     @Autowired
-   ModbusRecordRepository modbusRecordRepository;
+   FlowRepository modbusRecordRepository;
 
     private static final String SEPARATOR = "124 124 124";
 

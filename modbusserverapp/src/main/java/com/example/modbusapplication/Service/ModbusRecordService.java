@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import com.example.modbusapplication.Model.ModbusEntityDao;
 import com.example.modbusapplication.Model.ModbusRecord;
 import com.example.modbusapplication.Model.PackingEntityDao;
-import com.example.modbusapplication.Repository.ModbusRecordRepository;
+import com.example.modbusapplication.Repository.FlowRepository;
+import com.example.modbusapplication.Repository.PackingRepository;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -18,7 +19,9 @@ import java.util.List;
 public class ModbusRecordService {
 
     @Autowired
-    ModbusRecordRepository modbusRecordRepository;
+    FlowRepository modbusRecordRepository;
+       @Autowired
+    PackingRepository packingRepository;
 
     public boolean decodeAndStore(String base64Data) {
         try {
@@ -113,27 +116,27 @@ public class ModbusRecordService {
         }
     }
 
-    public boolean storeData(ModbusEntityDao modbusEntityDao) {
-        try {
-            modbusRecordRepository.insertDataEntity(modbusEntityDao);
-            System.out.println("Record saved to database: " + modbusEntityDao);
-            return true;
-        } catch (Exception e) {
-            System.err.println("Exception storing data: " + e.getMessage());
-            return false;
-        }
-    }
+    // public boolean storeData(ModbusEntityDao modbusEntityDao) {
+    //     try {
+    //         modbusRecordRepository.insertDataEntity(modbusEntityDao);
+    //         System.out.println("Record saved to database: " + modbusEntityDao);
+    //         return true;
+    //     } catch (Exception e) {
+    //         System.err.println("Exception storing data: " + e.getMessage());
+    //         return false;
+    //     }
+    // }
 
-    public boolean storePackingData(PackingEntityDao modbusEntityDao) {
-    try {
-        modbusRecordRepository.insertPackingData(modbusEntityDao);
-        System.out.println("Packing record saved to database: " + modbusEntityDao);
-        return true;
-    } catch (Exception e) {
-        System.err.println("Exception storing packing data: " + e.getMessage());
-        return false;
-    }
-}
+//     public boolean storePackingData(PackingEntityDao modbusEntityDao) {
+//     try {
+//         packingRepository.insertPackingData(modbusEntityDao);
+//         System.out.println("Packing record saved to database: " + modbusEntityDao);
+//         return true;
+//     } catch (Exception e) {
+//         System.err.println("Exception storing packing data: " + e.getMessage());
+//         return false;
+//     }
+// }
 
 
     public boolean decodeAndStorePacking(String base64Data) {
@@ -217,7 +220,7 @@ public class ModbusRecordService {
                     timestamp, batchId, bagWeightSet, actualWeight, scaleUsed,
                     bagCount, accumulatedWeight, machineStatus, deviceId);
 
-            modbusRecordRepository.insertPackingData(modbusEntityDao);
+            packingRepository.insertPackingData(modbusEntityDao);
             System.out.println("Packing record saved: " + modbusEntityDao);
             return true;
 

@@ -20,7 +20,8 @@ import com.example.modbusapplication.Model.RegDeviceDAO;
 import com.example.modbusapplication.Model.SearchCompanyDao;
 // import com.example.modbusapplication.Entity.loginInformation;
 import com.example.modbusapplication.Repository.DeviceMappingRepository;
-import com.example.modbusapplication.Repository.ModbusRecordRepository;
+import com.example.modbusapplication.Repository.FlowRepository;
+import com.example.modbusapplication.Repository.PackingRepository;
 import com.example.modbusapplication.Repository.UserInformationRepository;
 
 
@@ -29,7 +30,10 @@ import com.example.modbusapplication.Repository.UserInformationRepository;
 public class AdminLogicService {
 
     @Autowired
-    ModbusRecordRepository modbusRecordRepository;
+    FlowRepository modbusRecordRepository;
+
+    @Autowired
+    PackingRepository packingRepository;
 
     @Autowired
     UserInformationRepository userRepository;
@@ -65,7 +69,7 @@ public class AdminLogicService {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body("The Device ID already present.Try different Device ID :(");
             }
-            modbusRecordRepository.packing_createTable(deviceId);
+            packingRepository.packing_createTable(deviceId);
             return ResponseEntity.status(HttpStatus.CREATED).body("Table created sucessfully :)");
 
         } catch (Exception e) {
