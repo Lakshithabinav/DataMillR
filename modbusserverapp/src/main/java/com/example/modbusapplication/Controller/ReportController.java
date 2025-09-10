@@ -8,6 +8,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,7 @@ public class ReportController {
     @Autowired
     FlowRepository flowRepository;
 
-  @PostMapping("/fetch")
+  @GetMapping("/fetch")
     public ResponseEntity<?> fetchReport(@RequestBody ModbusDataRequestDAO requestDAO) {
         try {
             Short deviceId = requestDAO.getDeviceId();
@@ -58,7 +59,7 @@ public class ReportController {
         }
     }
 
-    @PostMapping("/export-excel")
+    @GetMapping("/export-excel")
     public ResponseEntity<InputStreamResource> exportGroupedBatch(@RequestBody ExportRequestDTO requestDTO) throws Exception {
      String deviceName = requestDTO.getDeviceName();
     String startDate = requestDTO.getStartDate();

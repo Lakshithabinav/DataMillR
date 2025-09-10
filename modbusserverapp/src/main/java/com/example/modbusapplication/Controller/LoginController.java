@@ -30,57 +30,47 @@ public class LoginController {
         return ResponseEntity.ok(Map.of("randomNumber", randomNumber));
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(
+            @RequestBody Map<String, String> requestBody,
+            HttpServletRequest request) {
 
+        String hashedCredential = requestBody.get("hashedCredential");
+        String ip = normalizeIp(getClientIp(request));
 
-@PostMapping("/login")
-public ResponseEntity<?> loginUser(
-        @RequestBody Map<String, String> requestBody,
-        HttpServletRequest request) {
-
-    String hashedCredential = requestBody.get("hashedCredential");
-    String ip = normalizeIp(getClientIp(request));
-// System.out.println("Received encodedUserId: " + hashedCredential);
-// System.out.println("Decoded userId: " + decodedUserId);
-
-    return loginService.loginResponse(hashedCredential, ip);
-}
-
-
-
-
-
-   private String getClientIp(HttpServletRequest request) {
-    String ip = request.getHeader("X-Forwarded-For");
-    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-        return ip.split(",")[0].trim(); // In case of multiple IPs
+        return loginService.loginResponse(hashedCredential, ip);
     }
 
-    ip = request.getHeader("X-Real-IP"); // some proxies use this
-    if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-        return ip;
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+            return ip.split(",")[0].trim(); // In case of multiple IPs
+        }
+
+        ip = request.getHeader("X-Real-IP"); // some proxies use this
+        if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+
+        return request.getRemoteAddr();
     }
-
-    return request.getRemoteAddr();
-}
-
 
     private String normalizeIp(String ip) {
-        if (ip == null) return "UNKNOWN";
+        if (ip == null)
+            return "UNKNOWN";
         if ("::1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
             return "127.0.0.1";
         }
         return ip;
     }
 
-@PostMapping("/update-credentials")
-public ResponseEntity<?> updateCredentials(@RequestBody UpdateUserDAO updateUserDAO) {
-    if (updateUserDAO.getOldUserId() == null || updateUserDAO.getOldPassword() == null) {
-        return ResponseEntity.badRequest().body(Map.of("error", "Old userId and password are required"));
+    @PostMapping("/update-credentials")
+    public ResponseEntity<?> updateCredentials(@RequestBody UpdateUserDAO updateUserDAO) {
+        if (updateUserDAO.getOldUserId() == null || updateUserDAO.getOldPassword() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Old userId and password are required"));
+        }
+
+        return loginService.updateUserIdPassword(updateUserDAO);
     }
-
-    return loginService.updateUserIdPassword(updateUserDAO);
-}
-
-
 
 }

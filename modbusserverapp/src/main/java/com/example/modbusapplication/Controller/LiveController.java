@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,8 @@ import com.example.modbusapplication.Model.ModbusDataRequestDAO;
 import com.example.modbusapplication.Repository.FlowRepository;
 import com.example.modbusapplication.Service.FlowLiveGraghService;
 import com.example.modbusapplication.Service.PackingLiveGraghService;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/live")
@@ -25,47 +28,30 @@ public class LiveController {
     @Autowired
     private FlowRepository flowRepository;
 
+    @GetMapping("/last/data")
+    public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
+        try {
+            short deviceId = requestDAO.getDeviceId();
 
-// @PostMapping("/last/data")
-// public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
-//     try {
-//         short deviceId = requestDAO.getDeviceId();
-//         Object response = flowRepository.getLastDataByDeviceId(deviceId);
-//         return ResponseEntity.ok(response); // Will return either:
-//                                             // - List<ModbusEntityDao>
-//                                             // - ModbusGroupedBatchResponse
-//     } catch (IllegalArgumentException e) {
-//         return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-//     } catch (Exception e) {
-//         return ResponseEntity.internalServerError().body(Map.of("error", "Something went wrong"));
-//     }
-//}
+            Object response = flowRepository.getLastDataByDeviceId(deviceId);
 
-@PostMapping("/last/data")
-public ResponseEntity<?> getModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
-    try {
-        short deviceId = requestDAO.getDeviceId();
+            if (response == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "No data found for deviceId " + deviceId));
+            }
 
-        Object response = flowRepository.getLastDataByDeviceId(deviceId);
+            return ResponseEntity.ok(Map.of(
+                    "deviceId", deviceId,
+                    "data", response));
 
-        if (response == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "No data found for deviceId " + deviceId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
         }
-
-        return ResponseEntity.ok(Map.of(
-                "deviceId", deviceId,
-                "data", response
-        ));
-
-    } catch (IllegalArgumentException e) {
-        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-    } catch (Exception e) {
-        return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
     }
-}
 
- @PostMapping("/gragh/data")
+    @GetMapping("/gragh/data")
     public ResponseEntity<?> fetchModbusData(@RequestBody ModbusDataRequestDAO requestDAO) {
         try {
             Short deviceId = requestDAO.getDeviceId();

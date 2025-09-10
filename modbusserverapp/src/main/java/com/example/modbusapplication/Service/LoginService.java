@@ -37,7 +37,7 @@ public class LoginService {
     @Autowired
     LoginInformationRepository authSessionRepository;
     @Autowired
-   FlowRepository modbusRecordRepository;
+    FlowRepository modbusRecordRepository;
 
     private static final String SEPARATOR = "124 124 124";
 
@@ -67,7 +67,7 @@ public class LoginService {
     public ResponseEntity<LoginResponseDAO> loginResponse(String hashedCredential, String ipAddress) {
         // 1) find session
         Optional<LoginInformation> sessionOpt = authSessionRepository.findByIpAddress(ipAddress);
-            //    System.out.println("ipaddress: " + ipAddress);
+        // System.out.println("ipaddress: " + ipAddress);
         if (sessionOpt.isEmpty())
             return ResponseEntity.status(401).body(null);
         LoginInformation session = sessionOpt.get();
@@ -76,19 +76,19 @@ public class LoginService {
         int rand = Integer.parseInt(session.getRandomNumber());
         String[] parts = hashedCredential.split(Pattern.quote(SEPARATOR));
 
-//         System.out.println("HashedCredential received: " + hashedCredential);
-// System.out.println("Split parts count: " + parts.length);
-// for (int i = 0; i < parts.length; i++) {
-//     System.out.println("Part " + i + ": " + parts[i]);
-// }
+        // System.out.println("HashedCredential received: " + hashedCredential);
+        // System.out.println("Split parts count: " + parts.length);
+        // for (int i = 0; i < parts.length; i++) {
+        // System.out.println("Part " + i + ": " + parts[i]);
+        // }
 
         if (parts.length != 2)
             return ResponseEntity.badRequest().body(null);
         String decodedUserId = decodeAscii(parts[0].trim(), rand);
         String decodedPassword = decodeAscii(parts[1].trim(), rand);
 
-// System.out.println("✅ Decoded User ID: " + decodedUserId);
-// System.out.println("✅ Decoded Password: " + decodedPassword);
+        // System.out.println("✅ Decoded User ID: " + decodedUserId);
+        // System.out.println("✅ Decoded Password: " + decodedPassword);
 
         // 3) authenticate
         Optional<UserInformation> userOpt = userRepository.findByUserId(decodedUserId);
@@ -97,8 +97,6 @@ public class LoginService {
         UserInformation user = userOpt.get();
         boolean ok = user.getLoginPassword().equals(decodedPassword);
         // System.out.println("decoded User ID: " + decodedUserId);
-
-
 
         // 4) update session userKey/status
         session.setUserKey(user.getUserKey());
@@ -122,28 +120,27 @@ public class LoginService {
         for (DeviceMapping device : devices) {
             deviceNames.add(device.getDeviceName());
             deviceIds.add(device.getDeviceId());
-        } 
+        }
 
         List<DeviceNameDAO> deviceList = new ArrayList<>();
 
-for (DeviceMapping device : devices) {
-    List<ModbusEntityDao> latestRows = modbusRecordRepository.getDataByDeviceIdForLogin(device.getDeviceId());
-    ModbusEntityDao latest = latestRows.isEmpty() ? null : latestRows.get(0);
+        for (DeviceMapping device : devices) {
+            List<ModbusEntityDao> latestRows = modbusRecordRepository.getDataByDeviceIdForLogin(device.getDeviceId());
+            ModbusEntityDao latest = latestRows.isEmpty() ? null : latestRows.get(0);
 
-    String machineName = "Flow Veyor"; 
-    Double totalWeight = latest != null ? (double) latest.getTotalWeight() : null;
-    Double setWeight   = latest != null ? (double) latest.getSetWeight() : null;
-    String batchName   = latest != null ? latest.getBatchName() : null;
+            String machineName = "Flow Veyor";
+            Double totalWeight = latest != null ? (double) latest.getTotalWeight() : null;
+            Double setWeight = latest != null ? (double) latest.getSetWeight() : null;
+            String batchName = latest != null ? latest.getBatchName() : null;
 
-    deviceList.add(new DeviceNameDAO(
-        device.getDeviceName(),
-        device.getDeviceId(),
-        machineName,
-        totalWeight,
-        setWeight,
-        batchName
-    ));
-}
+            deviceList.add(new DeviceNameDAO(
+                    device.getDeviceName(),
+                    device.getDeviceId(),
+                    machineName,
+                    totalWeight,
+                    setWeight,
+                    batchName));
+        }
 
         LoginResponseDAO response = new LoginResponseDAO(
                 user.getUserId(),
@@ -168,7 +165,6 @@ for (DeviceMapping device : devices) {
 
     public String decodeAscii(String encodedText, int randomNumber) {
         // System.out.println("Received encodedUserId: " + encodedText);
-
 
         String[] encodedParts = encodedText.split(" ");
         StringBuilder decoded = new StringBuilder();
@@ -222,8 +218,8 @@ for (DeviceMapping device : devices) {
             updated = true;
         }
 
-        if(user.isNewUser()){
-           user.setNewUser(false); 
+        if (user.isNewUser()) {
+            user.setNewUser(false);
         }
 
         if (updated) {

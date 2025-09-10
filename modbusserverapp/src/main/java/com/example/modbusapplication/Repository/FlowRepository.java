@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.modbusapplication.Model.DailyDataDTO;
 import com.example.modbusapplication.Model.ModbusEntityDao;
 
 
@@ -26,13 +27,33 @@ public class FlowRepository {
                 "flowrate INT," +
                 "batch_name  VARCHAR(15)," +
                 "set_weight  INT," +
-                // "present_weight INT," +
                 "total_weight INT)";
         System.out.println("sql === " + sql);
         jdbcTemplate.execute(sql);
     }
 
-  
+    //Creating the dailyData Table to store daily total weight
+    public void createDailyDataTable(String deviceId) throws SQLException{
+        String sql ="CREATE TABLE IF NOT EXISTS modbus_daily_data_"+deviceId.trim()+"("+
+        "record_date DATE PRIMARY KEY,"+
+        "total_weight INT)";
+        System.out.println("sql === "+sql);
+        jdbcTemplate.execute(sql);
+
+    }
+
+    //creating the batchdata to store batch wise data
+    public void createBatchDataTable(String deviceId) throws SQLException{
+        String sql = "CREATE TABLE IF NOT EXISTS modbus_batch_data_"+deviceId.trim()+"("+
+        "start_date DATETIME ,"+
+        "end_date DATETIME ,"+
+        "bach_name VARCHAR(15),"+
+        "total_weight INT,"+
+        "is_end boolean)";
+        System.out.println("sql === "+sql);
+        jdbcTemplate.execute(sql);
+
+    }
 
 
     public void insertDataEntity(ModbusEntityDao modbusEntityDao) {
@@ -48,7 +69,18 @@ public class FlowRepository {
             // modbusEntityDao.getPresentWeight(),
             modbusEntityDao.getTotalWeight());
     }
-   
+
+
+    public void insertDailyData(DailyDataDTO dailyDataDTO){
+        String sql = "INSERT INTO modbus_daily_data_"+dailyDataDTO.getDeviceId()+
+        "(record_date,total_weight) VALUES (CURDATE(),?)"+
+        "ON DUPLICATE KEY UPDATE total_weight= ?";
+        int dailyTotalweight = dailyDataDTO.getDailyTotalweight();
+        jdbcTemplate.update(sql,
+            dailyTotalweight,
+            dailyTotalweight);
+
+    }
    public List<ModbusEntityDao> getDataByDeviceIdAndDateRange(short deviceId, LocalDateTime start, LocalDateTime end) {
         String tableName = "modbus_data_" + deviceId;
         String sql = "SELECT timestamp, status, flowrate, batch_name, set_weight, total_weight FROM " + tableName +
